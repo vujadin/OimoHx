@@ -98,6 +98,23 @@ class BoxShape extends Shape {
     public var vertex6:Vec3;
     public var vertex7:Vec3;
     public var vertex8:Vec3;
+	
+	var wx:Float;
+	var wy:Float;
+	var wz:Float;
+	var hx:Float;
+	var hy:Float;
+	var hz:Float;
+	var dx:Float;
+	var dy:Float;
+	var dz:Float;
+	var x:Float;
+	var y:Float;
+	var z:Float;
+	var w:Float;
+	var h:Float;
+	var d:Float;
+	
     
     public function new(config:ShapeConfig, width:Float, height:Float, depth:Float) {
         super(config);
@@ -122,151 +139,144 @@ class BoxShape extends Shape {
         vertex7 = new Vec3();
         vertex8 = new Vec3();
         type = Shape.SHAPE_BOX;
-    }
-    
-    /**
-	 * @inheritDoc
-	 */
-    override public function calculateMassInfo(out:MassInfo) {
-        var mass:Float = width * height * depth * density;
-        out.mass = mass;
-        out.inertia.init(
+		
+		this.calculateMassInfo = _calculateMassInfo;		
+		this.updateProxy = _updateProxy;
+    } 
+	
+	inline function _calculateMassInfo(out:MassInfo) {
+		var mass:Float = width * height * depth * density;
+		out.mass = mass;
+		out.inertia.init(
 			mass * (height * height + depth * depth) / 12, 0, 0,
 			0, mass * (width * width + depth * depth) / 12, 0,
 			0, 0, mass * (width * width + height * height) / 12
 		);
-    }
-    
-    /**
-	 * @inheritDoc
-	 */
-    override public function updateProxy() {
-        normalDirectionWidth.x = rotation.e00;
-        normalDirectionWidth.y = rotation.e10;
-        normalDirectionWidth.z = rotation.e20;
-        normalDirectionHeight.x = rotation.e01;
-        normalDirectionHeight.y = rotation.e11;
-        normalDirectionHeight.z = rotation.e21;
-        normalDirectionDepth.x = rotation.e02;
-        normalDirectionDepth.y = rotation.e12;
-        normalDirectionDepth.z = rotation.e22;
-        halfDirectionWidth.x = rotation.e00 * halfWidth;
-        halfDirectionWidth.y = rotation.e10 * halfWidth;
-        halfDirectionWidth.z = rotation.e20 * halfWidth;
-        halfDirectionHeight.x = rotation.e01 * halfHeight;
-        halfDirectionHeight.y = rotation.e11 * halfHeight;
-        halfDirectionHeight.z = rotation.e21 * halfHeight;
-        halfDirectionDepth.x = rotation.e02 * halfDepth;
-        halfDirectionDepth.y = rotation.e12 * halfDepth;
-        halfDirectionDepth.z = rotation.e22 * halfDepth;
+	}
+	
+	inline function _updateProxy() {
+		normalDirectionWidth.x = rotation.e00;
+		normalDirectionWidth.y = rotation.e10;
+		normalDirectionWidth.z = rotation.e20;
+		normalDirectionHeight.x = rotation.e01;
+		normalDirectionHeight.y = rotation.e11;
+		normalDirectionHeight.z = rotation.e21;
+		normalDirectionDepth.x = rotation.e02;
+		normalDirectionDepth.y = rotation.e12;
+		normalDirectionDepth.z = rotation.e22;
+		halfDirectionWidth.x = rotation.e00 * halfWidth;
+		halfDirectionWidth.y = rotation.e10 * halfWidth;
+		halfDirectionWidth.z = rotation.e20 * halfWidth;
+		halfDirectionHeight.x = rotation.e01 * halfHeight;
+		halfDirectionHeight.y = rotation.e11 * halfHeight;
+		halfDirectionHeight.z = rotation.e21 * halfHeight;
+		halfDirectionDepth.x = rotation.e02 * halfDepth;
+		halfDirectionDepth.y = rotation.e12 * halfDepth;
+		halfDirectionDepth.z = rotation.e22 * halfDepth;
 		
-        var wx:Float = halfDirectionWidth.x;
-        var wy:Float = halfDirectionWidth.y;
-        var wz:Float = halfDirectionWidth.z;
-        var hx:Float = halfDirectionHeight.x;
-        var hy:Float = halfDirectionHeight.y;
-        var hz:Float = halfDirectionHeight.z;
-        var dx:Float = halfDirectionDepth.x;
-        var dy:Float = halfDirectionDepth.y;
-        var dz:Float = halfDirectionDepth.z;
-        var x:Float = position.x;
-        var y:Float = position.y;
-        var z:Float = position.z;
+		wx = halfDirectionWidth.x;
+		wy = halfDirectionWidth.y;
+		wz = halfDirectionWidth.z;
+		hx = halfDirectionHeight.x;
+		hy = halfDirectionHeight.y;
+		hz = halfDirectionHeight.z;
+		dx = halfDirectionDepth.x;
+		dy = halfDirectionDepth.y;
+		dz = halfDirectionDepth.z;
+		x = position.x;
+		y = position.y;
+		z = position.z;
 		
-        vertex1.x = x + wx + hx + dx;
-        vertex1.y = y + wy + hy + dy;
-        vertex1.z = z + wz + hz + dz;
-        vertex2.x = x + wx + hx - dx;
-        vertex2.y = y + wy + hy - dy;
-        vertex2.z = z + wz + hz - dz;
-        vertex3.x = x + wx - hx + dx;
-        vertex3.y = y + wy - hy + dy;
-        vertex3.z = z + wz - hz + dz;
-        vertex4.x = x + wx - hx - dx;
-        vertex4.y = y + wy - hy - dy;
-        vertex4.z = z + wz - hz - dz;
-        vertex5.x = x - wx + hx + dx;
-        vertex5.y = y - wy + hy + dy;
-        vertex5.z = z - wz + hz + dz;
-        vertex6.x = x - wx + hx - dx;
-        vertex6.y = y - wy + hy - dy;
-        vertex6.z = z - wz + hz - dz;
-        vertex7.x = x - wx - hx + dx;
-        vertex7.y = y - wy - hy + dy;
-        vertex7.z = z - wz - hz + dz;
-        vertex8.x = x - wx - hx - dx;
-        vertex8.y = y - wy - hy - dy;
-        vertex8.z = z - wz - hz - dz;
+		vertex1.x = x + wx + hx + dx;
+		vertex1.y = y + wy + hy + dy;
+		vertex1.z = z + wz + hz + dz;
+		vertex2.x = x + wx + hx - dx;
+		vertex2.y = y + wy + hy - dy;
+		vertex2.z = z + wz + hz - dz;
+		vertex3.x = x + wx - hx + dx;
+		vertex3.y = y + wy - hy + dy;
+		vertex3.z = z + wz - hz + dz;
+		vertex4.x = x + wx - hx - dx;
+		vertex4.y = y + wy - hy - dy;
+		vertex4.z = z + wz - hz - dz;
+		vertex5.x = x - wx + hx + dx;
+		vertex5.y = y - wy + hy + dy;
+		vertex5.z = z - wz + hz + dz;
+		vertex6.x = x - wx + hx - dx;
+		vertex6.y = y - wy + hy - dy;
+		vertex6.z = z - wz + hz - dz;
+		vertex7.x = x - wx - hx + dx;
+		vertex7.y = y - wy - hy + dy;
+		vertex7.z = z - wz - hz + dz;
+		vertex8.x = x - wx - hx - dx;
+		vertex8.y = y - wy - hy - dy;
+		vertex8.z = z - wz - hz - dz;			
 		
-        var w:Float;
-        var h:Float;
-        var d:Float;
+		if (halfDirectionWidth.x < 0) {
+			w = -halfDirectionWidth.x;
+		}
+		else {
+			w = halfDirectionWidth.x;
+		}
+		if (halfDirectionWidth.y < 0) {
+			h = -halfDirectionWidth.y;
+		}
+		else {
+			h = halfDirectionWidth.y;
+		}
+		if (halfDirectionWidth.z < 0) {
+			d = -halfDirectionWidth.z;
+		}
+		else {
+			d = halfDirectionWidth.z;
+		}
+		if (halfDirectionHeight.x < 0) {
+			w -= halfDirectionHeight.x;
+		}
+		else {
+			w += halfDirectionHeight.x;
+		}
+		if (halfDirectionHeight.y < 0) {
+			h -= halfDirectionHeight.y;
+		}
+		else {
+			h += halfDirectionHeight.y;
+		}
+		if (halfDirectionHeight.z < 0) {
+			d -= halfDirectionHeight.z;
+		}
+		else {
+			d += halfDirectionHeight.z;
+		}
+		if (halfDirectionDepth.x < 0) {
+			w -= halfDirectionDepth.x;
+		}
+		else {
+			w += halfDirectionDepth.x;
+		}
+		if (halfDirectionDepth.y < 0) {
+			h -= halfDirectionDepth.y;
+		}
+		else {
+			h += halfDirectionDepth.y;
+		}
+		if (halfDirectionDepth.z < 0) {
+			d -= halfDirectionDepth.z;
+		}
+		else {
+			d += halfDirectionDepth.z;
+		}
 		
-        if (halfDirectionWidth.x < 0) {
-            w = -halfDirectionWidth.x;
-        }
-        else {
-            w = halfDirectionWidth.x;
-        }
-        if (halfDirectionWidth.y < 0) {
-            h = -halfDirectionWidth.y;
-        }
-        else {
-            h = halfDirectionWidth.y;
-        }
-        if (halfDirectionWidth.z < 0) {
-            d = -halfDirectionWidth.z;
-        }
-        else {
-            d = halfDirectionWidth.z;
-        }
-        if (halfDirectionHeight.x < 0) {
-            w -= halfDirectionHeight.x;
-        }
-        else {
-            w += halfDirectionHeight.x;
-        }
-        if (halfDirectionHeight.y < 0) {
-            h -= halfDirectionHeight.y;
-        }
-        else {
-            h += halfDirectionHeight.y;
-        }
-        if (halfDirectionHeight.z < 0) {
-            d -= halfDirectionHeight.z;
-        }
-        else {
-            d += halfDirectionHeight.z;
-        }
-        if (halfDirectionDepth.x < 0) {
-            w -= halfDirectionDepth.x;
-        }
-        else {
-            w += halfDirectionDepth.x;
-        }
-        if (halfDirectionDepth.y < 0) {
-            h -= halfDirectionDepth.y;
-        }
-        else {
-            h += halfDirectionDepth.y;
-        }
-        if (halfDirectionDepth.z < 0) {
-            d -= halfDirectionDepth.z;
-        }
-        else {
-            d += halfDirectionDepth.z;
-        }
-		
-        aabb.init(
+		aabb.init(
 			position.x - w - 0.005, position.x + w + 0.005,
 			position.y - h - 0.005, position.y + h + 0.005,
 			position.z - d - 0.005, position.z + d + 0.005
 		);
 		
-        if (proxy != null) {
-            proxy.update();
-        }
-    }
+		if (proxy != null) {
+			proxy.update();
+		}
+	}
 	
 }
 

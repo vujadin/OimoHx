@@ -79,7 +79,7 @@ class RigidBody {
     /**
 	 * 重心のワールド座標です。
 	 */
-    public var position:Vec3;
+    public var position:Vec3 = new Vec3(0, 0, 0);
     
     /**
 	 * 姿勢を表すクォータニオンです。
@@ -268,18 +268,21 @@ class RigidBody {
 	 * @param	shape 追加する形状
 	 */
     public function addShape(shape:Shape) {
-        if (shape.parent != null) {
-            throw("Shape already has a parent!");
-        }
-        if (shapes != null) {
-			(shapes.prev = shape).next = shapes;
+		// TODO: temp fix for BabylonHx
+		if(shape != null) {
+			if (shape.parent != null) {
+				throw("Shape already has a parent!");
+			}
+			if (shapes != null) {
+				(shapes.prev = shape).next = shapes;
+			}
+			shapes = shape;
+			shape.parent = this;
+			if (parent != null) {
+				parent.addShape(shape);
+			}
+			numShapes++;
 		}
-        shapes = shape;
-        shape.parent = this;
-        if (parent != null) {
-            parent.addShape(shape);
-		}
-        numShapes++;
     }
     
     /**
@@ -320,10 +323,10 @@ class RigidBody {
 	 * @param	type
 	 * @param	adjustPosition
 	 */
-    public function setupMass(type:Int = BODY_DYNAMIC, adjustPosition:Bool = true) {
+    public function setupMass(type:Int = RigidBody.BODY_DYNAMIC, adjustPosition:Bool = true) {
         this.type = type;
-        isDynamic = type == BODY_DYNAMIC;
-        isStatic = type == BODY_STATIC;
+        isDynamic = type == RigidBody.BODY_DYNAMIC;
+        isStatic = type == RigidBody.BODY_STATIC;
         mass = 0;
         localInertia.init(0, 0, 0, 0, 0, 0, 0, 0, 0);
         var tmpM:Mat33 = new Mat33();
@@ -389,7 +392,7 @@ class RigidBody {
         
         inverseLocalInertia.invert(localInertia);
         
-        if (type == BODY_STATIC) {
+        if (type == RigidBody.BODY_STATIC) {
             inverseMass = 0;
             inverseLocalInertia.init(0, 0, 0, 0, 0, 0, 0, 0, 0);
         }
@@ -472,7 +475,7 @@ class RigidBody {
 	 */
     inline public function updatePosition(timeStep:Float) {
         switch (type) {
-            case BODY_STATIC:
+            case RigidBody.BODY_STATIC:
                 linearVelocity.x = 0;
                 linearVelocity.y = 0;
                 linearVelocity.z = 0;
@@ -480,7 +483,7 @@ class RigidBody {
                 angularVelocity.y = 0;
                 angularVelocity.z = 0;
 				
-            case BODY_DYNAMIC:
+            case RigidBody.BODY_DYNAMIC:
                 var vx:Float = linearVelocity.x;
                 var vy:Float = linearVelocity.y;
                 var vz:Float = linearVelocity.z;
@@ -508,19 +511,6 @@ class RigidBody {
                 orientation.x = ox * s;
                 orientation.y = oy * s;
                 orientation.z = oz * s;
-                //var len:Number = Math.sqrt(vx * vx + vy * vy + vz * vz);
-                //var theta:Number = len * timeStep;
-                //if (len > 0) len = 1 / len;
-                //vx *= len;
-                //vy *= len;
-                //vz *= len;
-                //var sin:Number = Math.sin(theta * 0.5);
-                //var cos:Number = Math.cos(theta * 0.5);
-                //var q:Quat = new Quat(cos, vx * sin, vy * sin, vz * sin);
-                //orientation.mul(q, orientation);
-                //orientation.normalize(orientation);
-                //break;
-                //throw new Error("Invalid type.");
 				
             default:
                 //throw new Error("Invalid type.");
@@ -629,10 +619,6 @@ class RigidBody {
         angularVelocity.x += rel.x;
         angularVelocity.y += rel.y;
         angularVelocity.z += rel.z;
-
-        //if (linearVelocity.x < 0.01 && linearVelocity.x > -0.01) linearVelocity.x = 0;
-        //if (linearVelocity.y < 0.01 && linearVelocity.y > -0.01) linearVelocity.y = 0;
-        //if (linearVelocity.z < 0.01 && linearVelocity.z > -0.01) linearVelocity.z = 0;
     }
 
     inline public function setImpulse(position:Vec3, force:Vec3) {

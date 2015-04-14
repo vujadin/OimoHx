@@ -19,25 +19,16 @@
 package oimohx.physics.collision.broadphase;
 
 import oimohx.physics.collision.broadphase.Proxy;
-
 import oimohx.physics.collision.shape.Shape;
+
 /**
-	 * A basic implementation of proxies.
-	 * @author saharan
-	 */
-class BasicProxy extends Proxy
-{
+ * A basic implementation of proxies.
+ * @author saharan
+ */
+class BasicProxy extends Proxy {
     
-    public function new(shape : Shape)
-    {
+    public function new(shape:Shape) {
         super(shape);
     }
-    
-    /**
-		 * @inheritDoc
-		 */
-    override public function update() : Void{
-        
-    }
+	
 }
-

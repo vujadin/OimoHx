@@ -19,42 +19,41 @@
 package oimohx.physics.collision.broadphase;
 
 import oimohx.physics.collision.broadphase.Proxy;
-
 import oimohx.physics.collision.shape.Shape;
 import oimohx.physics.dynamics.RigidBody;
 import oimohx.physics.dynamics.World;
 
 /**
-	 * A broad-phase algorithm with brute-force search.
-	 * This always checks for all possible pairs.
-	 */
-class BruteForceBroadPhase extends BroadPhase
-{
-    private var proxies : Array<Proxy>;
-    private var numProxies : Int;
-    private var maxProxies : Int;
+ * A broad-phase algorithm with brute-force search.
+ * This always checks for all possible pairs.
+ */
+class BruteForceBroadPhase extends BroadPhase {
+	
+    private var proxies:Array<Proxy>;
+    private var numProxies:Int;
+    private var maxProxies:Int;
+	
     
-    public function new()
-    {
+    public function new() {
         super();
         maxProxies = 256;
-        proxies = new Array<Proxy>();
+        proxies = [];
     }
     
     /**
-		 * @inheritDoc
-		 */
-    override public function createProxy(shape : Shape) : Proxy{
+	 * @inheritDoc
+	 */
+    override public function createProxy(shape:Shape):Proxy {
         return new BasicProxy(shape);
     }
     
     /**
-		 * @inheritDoc
-		 */
-    override public function addProxy(proxy : Proxy) : Void{
+	 * @inheritDoc
+	 */
+    override public function addProxy(proxy:Proxy) {
         if (numProxies == maxProxies) {
             maxProxies <<= 1;
-            var newProxies : Array<Proxy> = new Array<Proxy>();
+            var newProxies:Array<Proxy> = [];
             for (i in 0...numProxies){
                 newProxies[i] = proxies[i];
             }
@@ -64,9 +63,9 @@ class BruteForceBroadPhase extends BroadPhase
     }
     
     /**
-		 * @inheritDoc
-		 */
-    override public function removeProxy(proxy : Proxy) : Void{
+	 * @inheritDoc
+	 */
+    override public function removeProxy(proxy:Proxy) {
         for (i in 0...numProxies){
             if (proxies[i] == proxy) {
                 proxies[i] = proxies[--numProxies];
@@ -76,27 +75,27 @@ class BruteForceBroadPhase extends BroadPhase
         }
     }
     
-    override private function collectPairs() : Void{
+    override private function collectPairs() {
         numPairChecks = numProxies * (numProxies - 1) >> 1;
-        for (i in 0...numProxies){
-            var p1 : Proxy = proxies[i];
-            var b1 : AABB = p1.aabb;
-            var s1 : Shape = p1.shape;
+        for (i in 0...numProxies) {
+            var p1:Proxy = proxies[i];
+            var b1:AABB = p1.aabb;
+            var s1:Shape = p1.shape;
             for (j in i + 1...numProxies){
-                var p2 : Proxy = proxies[j];
-                var b2 : AABB = p2.aabb;
-                var s2 : Shape = p2.shape;
+                var p2:Proxy = proxies[j];
+                var b2:AABB = p2.aabb;
+                var s2:Shape = p2.shape;
                 if (
-                    b1.maxX < b2.minX || b1.minX > b2.maxX ||
-                    b1.maxY < b2.minY || b1.minY > b2.maxY ||
-                    b1.maxZ < b2.minZ || b1.minZ > b2.maxZ ||
-                    !isAvailablePair(s1, s2)) {
-                    {/*j++;*/continue;
-                    }
-                }
+					b1.maxX < b2.minX || b1.minX > b2.maxX ||
+					b1.maxY < b2.minY || b1.minY > b2.maxY ||
+					b1.maxZ < b2.minZ || b1.minZ > b2.maxZ ||
+					!isAvailablePair(s1, s2)
+				) {
+					continue;
+				}
                 addPair(s1, s2);
             }
         }
     }
+	
 }
-

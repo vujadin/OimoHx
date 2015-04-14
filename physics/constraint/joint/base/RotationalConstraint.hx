@@ -1,73 +1,73 @@
 package oimohx.physics.constraint.joint.base;
 
-
 import oimohx.math.Mat33;
 import oimohx.math.Vec3;
 import oimohx.physics.constraint.joint.Joint;
 import oimohx.physics.constraint.joint.LimitMotor;
 import oimohx.physics.dynamics.RigidBody;
+
 /**
-	 * A rotational constraint for various joints.
-	 * @author saharan
-	 */
-class RotationalConstraint
-{
-    public var limitMotor : LimitMotor;
-    private var b1 : RigidBody;
-    private var b2 : RigidBody;
-    private var a1 : Vec3;
-    private var a2 : Vec3;
-    private var i1 : Mat33;
-    private var i2 : Mat33;
+ * A rotational constraint for various joints.
+ * @author saharan
+ */
+class RotationalConstraint {
+	
+    public var limitMotor:LimitMotor;
+    private var b1:RigidBody;
+    private var b2:RigidBody;
+    private var a1:Vec3;
+    private var a2:Vec3;
+    private var i1:Mat33;
+    private var i2:Mat33;
     
-    private var cfm : Float;
+    private var cfm:Float;
     
-    private var i1e00 : Float;
-    private var i1e01 : Float;
-    private var i1e02 : Float;
-    private var i1e10 : Float;
-    private var i1e11 : Float;
-    private var i1e12 : Float;
-    private var i1e20 : Float;
-    private var i1e21 : Float;
-    private var i1e22 : Float;
-    private var i2e00 : Float;
-    private var i2e01 : Float;
-    private var i2e02 : Float;
-    private var i2e10 : Float;
-    private var i2e11 : Float;
-    private var i2e12 : Float;
-    private var i2e20 : Float;
-    private var i2e21 : Float;
-    private var i2e22 : Float;
-    private var motorDenom : Float;
-    private var invMotorDenom : Float;
-    private var invDenom : Float;
-    private var ax : Float;
-    private var ay : Float;
-    private var az : Float;
-    private var a1x : Float;
-    private var a1y : Float;
-    private var a1z : Float;
-    private var a2x : Float;
-    private var a2y : Float;
-    private var a2z : Float;
+    private var i1e00:Float;
+    private var i1e01:Float;
+    private var i1e02:Float;
+    private var i1e10:Float;
+    private var i1e11:Float;
+    private var i1e12:Float;
+    private var i1e20:Float;
+    private var i1e21:Float;
+    private var i1e22:Float;
+    private var i2e00:Float;
+    private var i2e01:Float;
+    private var i2e02:Float;
+    private var i2e10:Float;
+    private var i2e11:Float;
+    private var i2e12:Float;
+    private var i2e20:Float;
+    private var i2e21:Float;
+    private var i2e22:Float;
+    private var motorDenom:Float;
+    private var invMotorDenom:Float;
+    private var invDenom:Float;
+    private var ax:Float;
+    private var ay:Float;
+    private var az:Float;
+    private var a1x:Float;
+    private var a1y:Float;
+    private var a1z:Float;
+    private var a2x:Float;
+    private var a2y:Float;
+    private var a2z:Float;
     
-    private var enableLimit : Bool;
-    private var lowerLimit : Float;
-    private var upperLimit : Float;
-    private var limitVelocity : Float;
-    private var limitImpulse : Float;
-    private var limitState : Int;  // -1: at lower, 0: locked, 1: at upper, 2: free  
+    private var enableLimit:Bool;
+    private var lowerLimit:Float;
+    private var upperLimit:Float;
+    private var limitVelocity:Float;
+    private var limitImpulse:Float;
+    private var limitState:Int;  // -1: at lower, 0: locked, 1: at upper, 2: free  
     
-    private var enableMotor : Bool;
-    private var motorSpeed : Float;
-    private var maxMotorForce : Float;
-    private var maxMotorImpulse : Float;
-    private var motorImpulse : Float;
+    private var enableMotor:Bool;
+    private var motorSpeed:Float;
+    private var maxMotorForce:Float;
+    private var maxMotorImpulse:Float;
+    private var motorImpulse:Float;
+	
     
-    public function new(joint : Joint, limitMotor : LimitMotor)
-    {
+    public function new(joint:Joint, limitMotor:LimitMotor) {
         this.limitMotor = limitMotor;
         b1 = joint.body1;
         b2 = joint.body2;
@@ -79,7 +79,7 @@ class RotationalConstraint
         motorImpulse = 0;
     }
     
-    public function preSolve(timeStep : Float, invTimeStep : Float) : Void{
+    public function preSolve(timeStep:Float, invTimeStep:Float) {
         ax = limitMotor.axis.x;
         ay = limitMotor.axis.y;
         az = limitMotor.axis.z;
@@ -107,11 +107,11 @@ class RotationalConstraint
         i2e21 = i2.e21;
         i2e22 = i2.e22;
         
-        var frequency : Float = limitMotor.frequency;
-        var enableSpring : Bool = frequency > 0;
-        var enableLimit : Bool = lowerLimit <= upperLimit;
+        var frequency:Float = limitMotor.frequency;
+        var enableSpring:Bool = frequency > 0;
+        var enableLimit:Bool = lowerLimit <= upperLimit;
         
-        var angle : Float = limitMotor.angle;
+        var angle:Float = limitMotor.angle;
         if (enableLimit) {
             if (lowerLimit == upperLimit) {
                 if (limitState != 0) {
@@ -140,9 +140,15 @@ class RotationalConstraint
                 limitVelocity = 0;
             }
             if (!enableSpring) {
-                if (limitVelocity > 0.02)                     limitVelocity -= 0.02
-                else if (limitVelocity < -0.02)                     limitVelocity += 0.02
-                else limitVelocity = 0;
+                if (limitVelocity > 0.02) {
+                    limitVelocity -= 0.02;
+				}
+                else if (limitVelocity < -0.02) {
+                    limitVelocity += 0.02;
+				}
+                else {
+					limitVelocity = 0;
+				}
             }
         }
         else {
@@ -168,9 +174,9 @@ class RotationalConstraint
         invMotorDenom = 1 / motorDenom;
         
         if (enableSpring && limitState != 2) {
-            var omega : Float = 6.2831853 * frequency;
-            var k : Float = omega * omega * timeStep;
-            var dmp : Float = invTimeStep / (k + 2 * limitMotor.dampingRatio * omega);
+            var omega:Float = 6.2831853 * frequency;
+            var k:Float = omega * omega * timeStep;
+            var dmp:Float = invTimeStep / (k + 2 * limitMotor.dampingRatio * omega);
             cfm = motorDenom * dmp;
             limitVelocity *= k * dmp;
         }
@@ -183,7 +189,7 @@ class RotationalConstraint
         
         limitImpulse *= 0.95;
         motorImpulse *= 0.95;
-        var totalImpulse : Float = limitImpulse + motorImpulse;
+        var totalImpulse:Float = limitImpulse + motorImpulse;
         a1.x += totalImpulse * a1x;
         a1.y += totalImpulse * a1y;
         a1.z += totalImpulse * a1z;
@@ -192,34 +198,44 @@ class RotationalConstraint
         a2.z -= totalImpulse * a2z;
     }
     
-    public function solve() : Void{
-        var rvn : Float = ax * (a2.x - a1.x) + ay * (a2.y - a1.y) + az * (a2.z - a1.z);
+    inline public function solve() {
+        var rvn:Float = ax * (a2.x - a1.x) + ay * (a2.y - a1.y) + az * (a2.z - a1.z);
         
         // motor part
-        var newMotorImpulse : Float;
+        var newMotorImpulse:Float;
         if (enableMotor) {
             newMotorImpulse = (rvn - motorSpeed) * invMotorDenom;
-            var oldMotorImpulse : Float = motorImpulse;
+            var oldMotorImpulse:Float = motorImpulse;
             motorImpulse += newMotorImpulse;
-            if (motorImpulse > maxMotorImpulse)                 motorImpulse = maxMotorImpulse
-            else if (motorImpulse < -maxMotorImpulse)                 motorImpulse = -maxMotorImpulse;
+            if (motorImpulse > maxMotorImpulse) {
+                motorImpulse = maxMotorImpulse;
+			}
+            else if (motorImpulse < -maxMotorImpulse) {
+                motorImpulse = -maxMotorImpulse;
+			}
             newMotorImpulse = motorImpulse - oldMotorImpulse;
             rvn -= newMotorImpulse * motorDenom;
         }
-        else newMotorImpulse = 0;
+        else {
+			newMotorImpulse = 0;
+		}
         
         // limit part
-        var newLimitImpulse : Float;
+        var newLimitImpulse:Float;
         if (limitState != 2) {
             newLimitImpulse = (rvn - limitVelocity - limitImpulse * cfm) * invDenom;
-            var oldLimitImpulse : Float = limitImpulse;
+            var oldLimitImpulse:Float = limitImpulse;
             limitImpulse += newLimitImpulse;
-            if (limitImpulse * limitState < 0)                 limitImpulse = 0;
+            if (limitImpulse * limitState < 0) {
+                limitImpulse = 0;
+			}
             newLimitImpulse = limitImpulse - oldLimitImpulse;
         }
-        else newLimitImpulse = 0;
+        else {
+			newLimitImpulse = 0;
+		}
         
-        var totalImpulse : Float = newLimitImpulse + newMotorImpulse;
+        var totalImpulse:Float = newLimitImpulse + newMotorImpulse;
         a1.x += totalImpulse * a1x;
         a1.y += totalImpulse * a1y;
         a1.z += totalImpulse * a1z;
@@ -227,5 +243,5 @@ class RotationalConstraint
         a2.y -= totalImpulse * a2y;
         a2.z -= totalImpulse * a2z;
     }
+	
 }
-

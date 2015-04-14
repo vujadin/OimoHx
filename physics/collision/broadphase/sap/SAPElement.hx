@@ -21,56 +21,55 @@ package oimohx.physics.collision.broadphase.sap;
 import oimohx.physics.collision.broadphase.sap.SAPProxy;
 
 /**
-	 * An element of proxies.
-	 * @author saharan
+ * An element of proxies.
+ * @author saharan
+ */
+class SAPElement {
+    /**
+	 * The parent proxy.
 	 */
-class SAPElement
-{
-    /**
-		 * The parent proxy.
-		 */
-    public var proxy : SAPProxy;
+    public var proxy:SAPProxy;
     
     /**
-		 * The pair element.
-		 */
-    public var pair : SAPElement;
+	 * The pair element.
+	 */
+    public var pair:SAPElement;
     
     /**
-		 * The value of the element.
-		 */
-    public var value : Float;
+	 * The value of the element.
+	 */
+    public var value:Float;
     
     /**
-		 * Whether the element has maximum value or not.
-		 */
-    public var max : Bool;
+	 * Whether the element has maximum value or not.
+	 */
+    public var max:Bool;
     
     /**
-		 * The minimum element on other axis.
-		 */
-    public var min1 : SAPElement;
+	 * The minimum element on other axis.
+	 */
+    public var min1:SAPElement;
     
     /**
-		 * The maximum element on other axis.
-		 */
-    public var max1 : SAPElement;
+	 * The maximum element on other axis.
+	 */
+    public var max1:SAPElement;
     
     /**
-		 * The minimum element on other axis.
-		 */
-    public var min2 : SAPElement;
+	 * The minimum element on other axis.
+	 */
+    public var min2:SAPElement;
     
     /**
-		 * The maximum element on other axis.
-		 */
-    public var max2 : SAPElement;
+	 * The maximum element on other axis.
+	 */
+    public var max2:SAPElement;
+	
     
-    public function new(proxy : SAPProxy, max : Bool)
-    {
+    public function new(proxy:SAPProxy, max:Bool) {
         this.proxy = proxy;
         this.max = max;
         value = 0;
     }
+	
 }
-

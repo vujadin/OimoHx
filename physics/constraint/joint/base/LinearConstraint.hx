@@ -1,93 +1,93 @@
 package oimohx.physics.constraint.joint.base;
 
-
 import oimohx.math.Mat33;
 import oimohx.math.Vec3;
 import oimohx.physics.constraint.joint.Joint;
 import oimohx.physics.dynamics.RigidBody;
+
 /**
-	 * A linear constraint for all axes for various joints.
-	 * @author saharan
-	 */
-class LinearConstraint
-{
-    private var joint : Joint;
-    private var b1 : RigidBody;
-    private var b2 : RigidBody;
-    private var r1 : Vec3;
-    private var r2 : Vec3;
-    private var p1 : Vec3;
-    private var p2 : Vec3;
-    private var l1 : Vec3;
-    private var l2 : Vec3;
-    private var a1 : Vec3;
-    private var a2 : Vec3;
-    private var i1 : Mat33;
-    private var i2 : Mat33;
+ * A linear constraint for all axes for various joints.
+ * @author saharan
+ */
+class LinearConstraint {
+	
+    private var joint:Joint;
+    private var b1:RigidBody;
+    private var b2:RigidBody;
+    private var r1:Vec3;
+    private var r2:Vec3;
+    private var p1:Vec3;
+    private var p2:Vec3;
+    private var l1:Vec3;
+    private var l2:Vec3;
+    private var a1:Vec3;
+    private var a2:Vec3;
+    private var i1:Mat33;
+    private var i2:Mat33;
     
-    private var m1 : Float;
-    private var m2 : Float;
-    private var i1e00 : Float;
-    private var i1e01 : Float;
-    private var i1e02 : Float;
-    private var i1e10 : Float;
-    private var i1e11 : Float;
-    private var i1e12 : Float;
-    private var i1e20 : Float;
-    private var i1e21 : Float;
-    private var i1e22 : Float;
-    private var i2e00 : Float;
-    private var i2e01 : Float;
-    private var i2e02 : Float;
-    private var i2e10 : Float;
-    private var i2e11 : Float;
-    private var i2e12 : Float;
-    private var i2e20 : Float;
-    private var i2e21 : Float;
-    private var i2e22 : Float;
-    private var d00 : Float;
-    private var d01 : Float;
-    private var d02 : Float;
-    private var d10 : Float;
-    private var d11 : Float;
-    private var d12 : Float;
-    private var d20 : Float;
-    private var d21 : Float;
-    private var d22 : Float;
-    private var r1x : Float;
-    private var r1y : Float;
-    private var r1z : Float;
-    private var r2x : Float;
-    private var r2y : Float;
-    private var r2z : Float;
-    private var ax1x : Float;
-    private var ax1y : Float;
-    private var ax1z : Float;
-    private var ay1x : Float;
-    private var ay1y : Float;
-    private var ay1z : Float;
-    private var az1x : Float;
-    private var az1y : Float;
-    private var az1z : Float;
-    private var ax2x : Float;
-    private var ax2y : Float;
-    private var ax2z : Float;
-    private var ay2x : Float;
-    private var ay2y : Float;
-    private var ay2z : Float;
-    private var az2x : Float;
-    private var az2y : Float;
-    private var az2z : Float;
-    private var vel : Float;
-    private var impx : Float;
-    private var impy : Float;
-    private var impz : Float;
-    private var velx : Float;
-    private var vely : Float;
-    private var velz : Float;
+    private var m1:Float;
+    private var m2:Float;
+    private var i1e00:Float;
+    private var i1e01:Float;
+    private var i1e02:Float;
+    private var i1e10:Float;
+    private var i1e11:Float;
+    private var i1e12:Float;
+    private var i1e20:Float;
+    private var i1e21:Float;
+    private var i1e22:Float;
+    private var i2e00:Float;
+    private var i2e01:Float;
+    private var i2e02:Float;
+    private var i2e10:Float;
+    private var i2e11:Float;
+    private var i2e12:Float;
+    private var i2e20:Float;
+    private var i2e21:Float;
+    private var i2e22:Float;
+    private var d00:Float;
+    private var d01:Float;
+    private var d02:Float;
+    private var d10:Float;
+    private var d11:Float;
+    private var d12:Float;
+    private var d20:Float;
+    private var d21:Float;
+    private var d22:Float;
+    private var r1x:Float;
+    private var r1y:Float;
+    private var r1z:Float;
+    private var r2x:Float;
+    private var r2y:Float;
+    private var r2z:Float;
+    private var ax1x:Float;
+    private var ax1y:Float;
+    private var ax1z:Float;
+    private var ay1x:Float;
+    private var ay1y:Float;
+    private var ay1z:Float;
+    private var az1x:Float;
+    private var az1y:Float;
+    private var az1z:Float;
+    private var ax2x:Float;
+    private var ax2y:Float;
+    private var ax2z:Float;
+    private var ay2x:Float;
+    private var ay2y:Float;
+    private var ay2z:Float;
+    private var az2x:Float;
+    private var az2y:Float;
+    private var az2z:Float;
+    private var vel:Float;
+    private var impx:Float;
+    private var impy:Float;
+    private var impz:Float;
+    private var velx:Float;
+    private var vely:Float;
+    private var velz:Float;
+	
     
-    public function new(joint : Joint)
-    {
+    public function new(joint:Joint) {
         this.joint = joint;
         r1 = joint.relativeAnchorPoint1;
         r2 = joint.relativeAnchorPoint2;
@@ -106,7 +106,7 @@ class LinearConstraint
         impz = 0;
     }
     
-    public function preSolve(timeStep : Float, invTimeStep : Float) : Void{
+    inline public function preSolve(timeStep:Float, invTimeStep:Float) {
         r1x = r1.x;
         r1y = r1.y;
         r1z = r1.z;
@@ -169,15 +169,15 @@ class LinearConstraint
         //
         // [/I] = Inverted moment inertia
         
-        var k00 : Float = m1 + m2;
-        var k01 : Float = 0;
-        var k02 : Float = 0;
-        var k10 : Float = 0;
-        var k11 : Float = k00;
-        var k12 : Float = 0;
-        var k20 : Float = 0;
-        var k21 : Float = 0;
-        var k22 : Float = k00;
+        var k00:Float = m1 + m2;
+        var k01:Float = 0;
+        var k02:Float = 0;
+        var k10:Float = 0;
+        var k11:Float = k00;
+        var k12:Float = 0;
+        var k20:Float = 0;
+        var k21:Float = 0;
+        var k22:Float = k00;
         
         k00 += i1e11 * r1z * r1z - (i1e21 + i1e12) * r1y * r1z + i1e22 * r1y * r1y;
         k01 += (i1e20 * r1y + i1e12 * r1x) * r1z - i1e10 * r1z * r1z - i1e22 * r1x * r1y;
@@ -199,7 +199,7 @@ class LinearConstraint
         k21 += (i2e10 * r2x - i2e00 * r2y) * r2z - i2e12 * r2x * r2x + i2e02 * r2x * r2y;
         k22 += i2e00 * r2y * r2y - (i2e10 + i2e01) * r2x * r2y + i2e11 * r2x * r2x;
         
-        var inv : Float = 1 / (
+        var inv:Float = 1 / (
         k00 * (k11 * k22 - k21 * k12) +
         k10 * (k21 * k02 - k01 * k22) +
         k20 * (k01 * k12 - k11 * k02));
@@ -216,7 +216,7 @@ class LinearConstraint
         velx = p2.x - p1.x;
         vely = p2.y - p1.y;
         velz = p2.z - p1.z;
-        var len : Float = Math.sqrt(velx * velx + vely * vely + velz * velz);
+        var len:Float = Math.sqrt(velx * velx + vely * vely + velz * velz);
         if (len > 0.005) {
             len = (0.005 - len) / len * invTimeStep * 0.05;
             velx *= len;
@@ -247,13 +247,13 @@ class LinearConstraint
         a2.z -= impx * ax2z + impy * ay2z + impz * az2z;
     }
     
-    public function solve() : Void{
-        var rvx : Float = l2.x - l1.x + a2.y * r2z - a2.z * r2y - a1.y * r1z + a1.z * r1y - velx;
-        var rvy : Float = l2.y - l1.y + a2.z * r2x - a2.x * r2z - a1.z * r1x + a1.x * r1z - vely;
-        var rvz : Float = l2.z - l1.z + a2.x * r2y - a2.y * r2x - a1.x * r1y + a1.y * r1x - velz;
-        var nimpx : Float = rvx * d00 + rvy * d01 + rvz * d02;
-        var nimpy : Float = rvx * d10 + rvy * d11 + rvz * d12;
-        var nimpz : Float = rvx * d20 + rvy * d21 + rvz * d22;
+    inline public function solve() {
+        var rvx:Float = l2.x - l1.x + a2.y * r2z - a2.z * r2y - a1.y * r1z + a1.z * r1y - velx;
+        var rvy:Float = l2.y - l1.y + a2.z * r2x - a2.x * r2z - a1.z * r1x + a1.x * r1z - vely;
+        var rvz:Float = l2.z - l1.z + a2.x * r2y - a2.y * r2x - a1.x * r1y + a1.y * r1x - velz;
+        var nimpx:Float = rvx * d00 + rvy * d01 + rvz * d02;
+        var nimpy:Float = rvx * d10 + rvy * d11 + rvz * d12;
+        var nimpz:Float = rvx * d20 + rvy * d21 + rvz * d22;
         impx += nimpx;
         impy += nimpy;
         impz += nimpz;
@@ -270,5 +270,5 @@ class LinearConstraint
         a2.y -= nimpx * ax2y + nimpy * ay2y + nimpz * az2y;
         a2.z -= nimpx * ax2z + nimpy * ay2z + nimpz * az2z;
     }
+	
 }
-

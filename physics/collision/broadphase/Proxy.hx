@@ -19,32 +19,32 @@
 package oimohx.physics.collision.broadphase;
 
 import oimohx.physics.collision.shape.Shape;
+
 /**
-	 * A proxy is used for broad-phase collecting pairs that can be colliding.
+ * A proxy is used for broad-phase collecting pairs that can be colliding.
+ */
+class Proxy {
+    /**
+	 * The parent shape.
 	 */
-class Proxy
-{
+    public var shape:Shape;    
     /**
-		 * The parent shape.
-		 */
-    public var shape : Shape;
+	 * The axis-aligned bounding box.
+	 */
+    public var aabb:AABB;
+	/**
+	 * Update the proxy.
+	 */ 
+	public var update:Void->Void;
+	
     
-    /**
-		 * The axis-aligned bounding box.
-		 */
-    public var aabb : AABB;
-    
-    public function new(shape : Shape)
-    {
+    public function new(shape:Shape) {
         this.shape = shape;
         aabb = shape.aabb;
-    }
-    
-    /**
-		 * Update the proxy.
-		 */
-    public function update() : Void{
-        //throw new Error("Inheritance error.");
-    }
+		
+		this.update = function() {
+			
+		};
+    }   
+	
 }
-

@@ -19,66 +19,65 @@
 package oimohx.physics.collision.broadphase.dbvt;
 
 import oimohx.physics.collision.broadphase.dbvt.DBVTNode;
-
 import oimohx.physics.collision.broadphase.AABB;
+
 /**
-	 * A dynamic bounding volume tree for the broad-phase algorithm.
-	 * @author saharan
-	 */
-class DBVT
-{
+ * A dynamic bounding volume tree for the broad-phase algorithm.
+ * @author saharan
+ */
+class DBVT {
     /**
-		 * The root of the tree.
-		 */
-    public var root : DBVTNode;
+	 * The root of the tree.
+	 */
+    public var root:DBVTNode;
     
-    private var freeNodes : Array<DBVTNode>;
-    private var numFreeNodes : Int;
-    private var aabb : AABB;
+    private var freeNodes:Array<DBVTNode>;
+    private var numFreeNodes:Int;
+    private var aabb:AABB;
+	
     
-    public function new()
-    {
-        freeNodes = new Array<DBVTNode>();
+    public function new() {
+        freeNodes = [];
         numFreeNodes = 0;
         aabb = new AABB();
     }
     
     /**
-		 * Move a leaf.
-		 * @param	leaf
-		 */
-    public function moveLeaf(leaf : DBVTNode) : Void{
+	 * Move a leaf.
+	 * @param	leaf
+	 */
+    public function moveLeaf(leaf:DBVTNode) {
         deleteLeaf(leaf);
         insertLeaf(leaf);
     }
     
     /**
-		 * Insert a leaf to the tree.
-		 * @param	node
-		 */
-    public function insertLeaf(leaf : DBVTNode) : Void{
+	 * Insert a leaf to the tree.
+	 * @param	node
+	 */
+    public function insertLeaf(leaf:DBVTNode) {
         if (root == null) {
             root = leaf;
             return;
         }
-        var lb : AABB = leaf.aabb;
-        var sibling : DBVTNode = root;
-        var oldArea : Float;
-        var newArea : Float;
-        while (sibling.proxy == null){  // descend the node to search the best pair  
-            var c1 : DBVTNode = sibling.child1;
-            var c2 : DBVTNode = sibling.child2;
-            var b : AABB = sibling.aabb;
-            var c1b : AABB = c1.aabb;
-            var c2b : AABB = c2.aabb;
+        var lb:AABB = leaf.aabb;
+        var sibling:DBVTNode = root;
+        var oldArea:Float;
+        var newArea:Float;
+        while (sibling.proxy == null) {  // descend the node to search the best pair  
+            var c1:DBVTNode = sibling.child1;
+            var c2:DBVTNode = sibling.child2;
+            var b:AABB = sibling.aabb;
+            var c1b:AABB = c1.aabb;
+            var c2b:AABB = c2.aabb;
             
             oldArea = b.surfaceArea();
             aabb.combine(lb, b);
             newArea = aabb.surfaceArea();
-            var creatingCost : Float = newArea * 2;  // cost of creating a new pair with the node  
-            var incrementalCost : Float = (newArea - oldArea) * 2;
+            var creatingCost:Float = newArea * 2;  // cost of creating a new pair with the node  
+            var incrementalCost:Float = (newArea - oldArea) * 2;
             
-            var discendingCost1 : Float = incrementalCost;
+            var discendingCost1:Float = incrementalCost;
             aabb.combine(lb, c1b);
             if (c1.proxy != null) {
                 // leaf cost = area(combined aabb)
@@ -89,7 +88,7 @@ class DBVT
                 discendingCost1 += aabb.surfaceArea() - c1b.surfaceArea();
             }
             
-            var discendingCost2 : Float = incrementalCost;
+            var discendingCost2:Float = incrementalCost;
             aabb.combine(lb, c2b);
             if (c2.proxy != null) {
                 // leaf cost = area(combined aabb)
@@ -117,8 +116,8 @@ class DBVT
                 }
             }
         }
-        var oldParent : DBVTNode = sibling.parent;
-        var newParent : DBVTNode;
+        var oldParent:DBVTNode = sibling.parent;
+        var newParent:DBVTNode;
         if (numFreeNodes > 0) {
             newParent = freeNodes[--numFreeNodes];
         }
@@ -153,35 +152,45 @@ class DBVT
         }        while ((newParent != null));
     }
     
-    public function getBalance(node : DBVTNode) : Int{
-        if (node.proxy != null)             return 0;
+    public function getBalance(node:DBVTNode):Int {
+        if (node.proxy != null) {
+			return 0;
+		}
         return node.child1.height - node.child2.height;
     }
     
-    public function print(node : DBVTNode, indent : Int, text : String) : String{
-        var hasChild : Bool = node.proxy == null;
-        if (hasChild)             text = print(node.child1, indent + 1, text);
-        var i : Int = indent * 2;
+    public function print(node:DBVTNode, indent:Int, text:String):String {
+        var hasChild:Bool = node.proxy == null;
+		
+        if (hasChild) {
+            text = print(node.child1, indent + 1, text);
+		}
+		
+        var i:Int = indent * 2;
         while (i >= 0){
             text += " ";
             i--;
         }
+		
         text += ((hasChild) ? getBalance(node) + "" : "[" + node.proxy.aabb.minX + "]") + "\n";
-        if (hasChild)             text = print(node.child2, indent + 1, text);
+        if (hasChild) {
+            text = print(node.child2, indent + 1, text);
+		}
+		
         return text;
     }
     
     /**
-		 * Delete a leaf from the tree.
-		 * @param	node
-		 */
-    public function deleteLeaf(leaf : DBVTNode) : Void{
+	 * Delete a leaf from the tree.
+	 * @param	node
+	 */
+    public function deleteLeaf(leaf:DBVTNode) {
         if (leaf == root) {
             root = null;
             return;
         }
-        var parent : DBVTNode = leaf.parent;
-        var sibling : DBVTNode;
+        var parent:DBVTNode = leaf.parent;
+        var sibling:DBVTNode;
         if (parent.child1 == leaf) {
             sibling = parent.child2;
         }
@@ -193,7 +202,7 @@ class DBVT
             sibling.parent = null;
             return;
         }
-        var grandParent : DBVTNode = parent.parent;
+        var grandParent:DBVTNode = parent.parent;
         sibling.parent = grandParent;
         if (grandParent.child1 == parent) {
             grandParent.child1 = sibling;
@@ -204,25 +213,26 @@ class DBVT
         if (numFreeNodes < 16384) {
             freeNodes[numFreeNodes++] = parent;
         }
-        do{
+        do {
             grandParent = balance(grandParent);
             fix(grandParent);
             grandParent = grandParent.parent;
-        }        while ((grandParent != null));
+        } while (grandParent != null);
     }
     
-    private function balance(node : DBVTNode) : DBVTNode{
-        var nh : Int = node.height;
+    private function balance(node:DBVTNode):DBVTNode {
+        var nh:Int = node.height;
         if (nh < 2) {
             return node;
         }
-        var p : DBVTNode = node.parent;
-        var l : DBVTNode = node.child1;
-        var r : DBVTNode = node.child2;
-        var lh : Int = l.height;
-        var rh : Int = r.height;
-        var balance : Int = lh - rh;
-        var t : Int;  // for bit operation  
+		
+        var p:DBVTNode = node.parent;
+        var l:DBVTNode = node.child1;
+        var r:DBVTNode = node.child2;
+        var lh:Int = l.height;
+        var rh:Int = r.height;
+        var balance:Int = lh - rh;
+        var t:Int;  // for bit operation  
         
         //          [ N ]
         //         /     \
@@ -232,10 +242,10 @@ class DBVT
         
         // Is the tree balanced?
         if (balance > 1) {
-            var ll : DBVTNode = l.child1;
-            var lr : DBVTNode = l.child2;
-            var llh : Int = ll.height;
-            var lrh : Int = lr.height;
+            var ll:DBVTNode = l.child1;
+            var lr:DBVTNode = l.child2;
+            var llh:Int = ll.height;
+            var lrh:Int = lr.height;
             
             // Is L-L higher than L-R?
             if (llh > lrh) {
@@ -314,10 +324,10 @@ class DBVT
             return l;
         }
         else if (balance < -1) {
-            var rl : DBVTNode = r.child1;
-            var rr : DBVTNode = r.child2;
-            var rlh : Int = rl.height;
-            var rrh : Int = rr.height;
+            var rl:DBVTNode = r.child1;
+            var rr:DBVTNode = r.child2;
+            var rlh:Int = rl.height;
+            var rrh:Int = rr.height;
             
             // Is R-L higher than R-R?
             if (rlh > rrh) {
@@ -393,15 +403,16 @@ class DBVT
             r.parent = p;
             return r;
         }
+		
         return node;
     }
     
-    private function fix(node : DBVTNode) : Void{
-        var c1 : DBVTNode = node.child1;
-        var c2 : DBVTNode = node.child2;
+    inline private function fix(node:DBVTNode) {
+        var c1:DBVTNode = node.child1;
+        var c2:DBVTNode = node.child2;
         node.aabb.combine(c1.aabb, c2.aabb);
-        var h1 : Int = c1.height;
-        var h2 : Int = c2.height;
+        var h1:Int = c1.height;
+        var h2:Int = c2.height;
         if (h1 < h2) {
             node.height = h2 + 1;
         }
@@ -409,5 +420,5 @@ class DBVT
             node.height = h1 + 1;
         }
     }
+	
 }
-

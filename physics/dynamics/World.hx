@@ -133,7 +133,7 @@ class World {
 	
     
     public function new(stepPerSecond:Float = 60, broadPhaseType:Int = BroadPhase.BROAD_PHASE_SWEEP_AND_PRUNE) {
-        //trace("OimoPhysics " + OimoPhysics.VERSION + " Copyright (c) 2012-2013 EL-EMENT saharan");
+        trace("OimoPhysics *** Copyright (c) 2012-2013 EL-EMENT saharan");
         timeStep = 1 / stepPerSecond;
         switch (broadPhaseType) {
             case BroadPhase.BROAD_PHASE_BRUTE_FORCE:
@@ -198,7 +198,8 @@ class World {
 	 */
     public function addRigidBody(rigidBody:RigidBody) {
         if (rigidBody.parent != null) {
-            throw("Body already has a parent!");
+            trace("Body already has a parent!");
+			return;
         }
         rigidBody.parent = this;
         rigidBody.awake();
@@ -339,25 +340,28 @@ class World {
     /**
 	 * ワールドの時間をタイムステップ秒だけ進めます。
 	 */
-    public function step(dt:Float) {
+    inline public function step(dt:Float) {
         timeStep = dt;
         var time1:Int = Math.round(haxe.Timer.stamp() * 1000);
         var body:RigidBody = rigidBodies;
+		var lv:Vec3 = null;
+		var p:Vec3 = null;
+		var sp:Vec3 = null;
+		var o:Quat = null;
+		var so:Quat = null;
         while (body != null) {	
             if (body.prestep != null) {
 				body.prestep();
 			}
             body.addedToIsland = false;
             if (body.sleeping) {
-                var lv:Vec3 = body.linearVelocity;
-                //var av : Vec3 = body.angularVelocity;
-                var p:Vec3 = body.position;
-                var sp:Vec3 = body.sleepPosition;
-                var o:Quat = body.orientation;
-                var so:Quat = body.sleepOrientation;
+                lv = body.linearVelocity;
+                p = body.position;
+                sp = body.sleepPosition;
+                o = body.orientation;
+                so = body.sleepOrientation;
                 if (
                     lv.x != 0 || lv.y != 0 || lv.z != 0 ||
-                    //av.x != 0 || av.y != 0 || av.z != 0 ||
                     p.x != sp.x || p.y != sp.y || p.z != sp.z ||
                     o.s != so.s || o.x != so.x || o.y != so.y || o.z != so.z) {  // awake the body  
                     body.awake();
@@ -373,7 +377,7 @@ class World {
         performance.updatingTime = performance.totalTime - (performance.broadPhaseTime + performance.narrowPhaseTime + performance.solvingTime);
     }
     
-    private function updateContacts() {
+    inline private function updateContacts() {
         // broad phase
         var time1:Int = Math.round(haxe.Timer.stamp() * 1000);
         broadPhase.detectPairs();

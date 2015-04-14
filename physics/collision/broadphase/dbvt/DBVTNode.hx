@@ -19,47 +19,47 @@
 package oimohx.physics.collision.broadphase.dbvt;
 
 import oimohx.physics.collision.broadphase.dbvt.DBVTProxy;
-
 import oimohx.physics.collision.broadphase.AABB;
+
 /**
-	 * A node of the dynamic bounding volume tree.
-	 * @author saharan
+ * A node of the dynamic bounding volume tree.
+ * @author saharan
+ */
+class DBVTNode {
+	
+    /**
+	 * The first child node of this node.
 	 */
-class DBVTNode
-{
-    /**
-		 * The first child node of this node.
-		 */
-    public var child1 : DBVTNode;
+    public var child1:DBVTNode;
     
     /**
-		 * The second child node of this node.
-		 */
-    public var child2 : DBVTNode;
+	 * The second child node of this node.
+	 */
+    public var child2:DBVTNode;
     
     /**
-		 * The parent node of this tree.
-		 */
-    public var parent : DBVTNode;
+	 * The parent node of this tree.
+	 */
+    public var parent:DBVTNode;
     
     /**
-		 * The proxy of this node. This has no value if this node is not leaf.
-		 */
-    public var proxy : DBVTProxy;
+	 * The proxy of this node. This has no value if this node is not leaf.
+	 */
+    public var proxy:DBVTProxy;
     
     /**
-		 * The maximum distance from leaf nodes.
-		 */
-    public var height : Int;
+	 * The maximum distance from leaf nodes.
+	 */
+    public var height:Int;
     
     /**
-		 * The AABB of this node.
-		 */
-    public var aabb : AABB;
+	 * The AABB of this node.
+	 */
+    public var aabb:AABB;
+	
     
-    public function new()
-    {
+    public function new() {
         aabb = new AABB();
     }
+	
 }
-

@@ -121,7 +121,7 @@ class Shape {
     /**
 	 * The parent rigid body of the shape.
 	 */
-    public var parent:RigidBody;
+    public var parent:RigidBody = null;
     
     /**
 	 * The linked list of the contacts with the shape.
@@ -162,16 +162,18 @@ class Shape {
 	 * Calculate the mass information of the shape.
 	 * @param	out
 	 */
-    public function calculateMassInfo(out:MassInfo) {
+	public var calculateMassInfo:MassInfo->Void;
+    /*public function calculateMassInfo(out:MassInfo) {
         throw("Shape: Inheritance error.");
-    }
+    }*/
     
     /**
 	 * Update the proxy of the shape.
 	 */
-    public function updateProxy() {
+	public var updateProxy:Void->Void;
+    /*public function updateProxy() {
         throw("Inheritance error.");
-    }
+    }*/
 	
 }
 

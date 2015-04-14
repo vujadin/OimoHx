@@ -26,28 +26,23 @@ import oimohx.physics.collision.shape.Shape;
 import oimohx.physics.collision.shape.SphereShape;
 import oimohx.physics.constraint.contact.ContactManifold;
 /**
-	 * A collision detector which detects collisions between two boxes.
-	 * @author saharan
-	 */
-class BoxBoxCollisionDetector extends CollisionDetector
-{
-    private var clipVertices1 : Array<Float>;
-    private var clipVertices2 : Array<Float>;
-    private var used : Array<Bool>;
-    private var INF : Float = std.Math.POSITIVE_INFINITY;//1 / 0;
+ * A collision detector which detects collisions between two boxes.
+ * @author saharan
+ */
+class BoxBoxCollisionDetector extends CollisionDetector {
+    private var clipVertices1:Array<Float>;
+    private var clipVertices2:Array<Float>;
+    private var used:Array<Bool>;
+    private var INF:Float = Math.POSITIVE_INFINITY;//1 / 0;
     
-    public function new()
-    {
+    public function new() {
         super();
-        clipVertices1 = new Array<Float>();  // 8 vertices x,y,z  
-        clipVertices2 = new Array<Float>();
-        used = new Array<Bool>();
+        clipVertices1 = [];  // 8 vertices x,y,z  
+        clipVertices2 = [];
+        used = [];
     }
     
-    /**
-		 * @inheritDoc
-		 */
-    override public function detectCollision(shape1 : Shape, shape2 : Shape, manifold : ContactManifold) : Void{
+    override public function detectCollision(shape1:Shape, shape2:Shape, manifold:ContactManifold) {
         // -------------------------------
         // やってること
         // ・15個の分離軸を用意する
@@ -72,8 +67,8 @@ class BoxBoxCollisionDetector extends CollisionDetector
         //   ・全ての衝突点の候補に対し、面Aとの距離を調べる
         //   ・面Aの内側にあった場合は、衝突点とする
         // -------------------------------
-        var b1 : BoxShape;
-        var b2 : BoxShape;
+        var b1:BoxShape;
+        var b2:BoxShape;
         if (shape1.id < shape2.id) {
             b1 = cast((shape1), BoxShape);
             b2 = cast((shape2), BoxShape);
@@ -82,49 +77,49 @@ class BoxBoxCollisionDetector extends CollisionDetector
             b1 = cast((shape2), BoxShape);
             b2 = cast((shape1), BoxShape);
         }
-        var p1 : Vec3 = b1.position;
-        var p2 : Vec3 = b2.position;
-        var p1x : Float = p1.x;
-        var p1y : Float = p1.y;
-        var p1z : Float = p1.z;
-        var p2x : Float = p2.x;
-        var p2y : Float = p2.y;
-        var p2z : Float = p2.z;
+        var p1:Vec3 = b1.position;
+        var p2:Vec3 = b2.position;
+        var p1x:Float = p1.x;
+        var p1y:Float = p1.y;
+        var p1z:Float = p1.z;
+        var p2x:Float = p2.x;
+        var p2y:Float = p2.y;
+        var p2z:Float = p2.z;
         // diff
-        var dx : Float = p2x - p1x;
-        var dy : Float = p2y - p1y;
-        var dz : Float = p2z - p1z;
+        var dx:Float = p2x - p1x;
+        var dy:Float = p2y - p1y;
+        var dz:Float = p2z - p1z;
         // distance
-        var w1 : Float = b1.halfWidth;
-        var h1 : Float = b1.halfHeight;
-        var d1 : Float = b1.halfDepth;
-        var w2 : Float = b2.halfWidth;
-        var h2 : Float = b2.halfHeight;
-        var d2 : Float = b2.halfDepth;
+        var w1:Float = b1.halfWidth;
+        var h1:Float = b1.halfHeight;
+        var d1:Float = b1.halfDepth;
+        var w2:Float = b2.halfWidth;
+        var h2:Float = b2.halfHeight;
+        var d2:Float = b2.halfDepth;
         // direction
-        var d1x : Float = b1.halfDirectionWidth.x;
-        var d1y : Float = b1.halfDirectionWidth.y;
-        var d1z : Float = b1.halfDirectionWidth.z;
+        var d1x:Float = b1.halfDirectionWidth.x;
+        var d1y:Float = b1.halfDirectionWidth.y;
+        var d1z:Float = b1.halfDirectionWidth.z;
         // b1.y
-        var d2x : Float = b1.halfDirectionHeight.x;
-        var d2y : Float = b1.halfDirectionHeight.y;
-        var d2z : Float = b1.halfDirectionHeight.z;
+        var d2x:Float = b1.halfDirectionHeight.x;
+        var d2y:Float = b1.halfDirectionHeight.y;
+        var d2z:Float = b1.halfDirectionHeight.z;
         // b1.z
-        var d3x : Float = b1.halfDirectionDepth.x;
-        var d3y : Float = b1.halfDirectionDepth.y;
-        var d3z : Float = b1.halfDirectionDepth.z;
+        var d3x:Float = b1.halfDirectionDepth.x;
+        var d3y:Float = b1.halfDirectionDepth.y;
+        var d3z:Float = b1.halfDirectionDepth.z;
         // b2.x
-        var d4x : Float = b2.halfDirectionWidth.x;
-        var d4y : Float = b2.halfDirectionWidth.y;
-        var d4z : Float = b2.halfDirectionWidth.z;
+        var d4x:Float = b2.halfDirectionWidth.x;
+        var d4y:Float = b2.halfDirectionWidth.y;
+        var d4z:Float = b2.halfDirectionWidth.z;
         // b2.y
-        var d5x : Float = b2.halfDirectionHeight.x;
-        var d5y : Float = b2.halfDirectionHeight.y;
-        var d5z : Float = b2.halfDirectionHeight.z;
+        var d5x:Float = b2.halfDirectionHeight.x;
+        var d5y:Float = b2.halfDirectionHeight.y;
+        var d5z:Float = b2.halfDirectionHeight.z;
         // b2.z
-        var d6x : Float = b2.halfDirectionDepth.x;
-        var d6y : Float = b2.halfDirectionDepth.y;
-        var d6z : Float = b2.halfDirectionDepth.z;
+        var d6x:Float = b2.halfDirectionDepth.x;
+        var d6y:Float = b2.halfDirectionDepth.y;
+        var d6z:Float = b2.halfDirectionDepth.z;
         // ----------------------------
         // 15 separating axes
         // 1~6: face
@@ -132,198 +127,258 @@ class BoxBoxCollisionDetector extends CollisionDetector
         // http://marupeke296.com/COL_3D_No13_OBBvsOBB.html
         // ----------------------------
         // b1.x
-        var a1x : Float = b1.normalDirectionWidth.x;
-        var a1y : Float = b1.normalDirectionWidth.y;
-        var a1z : Float = b1.normalDirectionWidth.z;
+        var a1x:Float = b1.normalDirectionWidth.x;
+        var a1y:Float = b1.normalDirectionWidth.y;
+        var a1z:Float = b1.normalDirectionWidth.z;
         // b1.y
-        var a2x : Float = b1.normalDirectionHeight.x;
-        var a2y : Float = b1.normalDirectionHeight.y;
-        var a2z : Float = b1.normalDirectionHeight.z;
+        var a2x:Float = b1.normalDirectionHeight.x;
+        var a2y:Float = b1.normalDirectionHeight.y;
+        var a2z:Float = b1.normalDirectionHeight.z;
         // b1.z
-        var a3x : Float = b1.normalDirectionDepth.x;
-        var a3y : Float = b1.normalDirectionDepth.y;
-        var a3z : Float = b1.normalDirectionDepth.z;
+        var a3x:Float = b1.normalDirectionDepth.x;
+        var a3y:Float = b1.normalDirectionDepth.y;
+        var a3z:Float = b1.normalDirectionDepth.z;
         // b2.x
-        var a4x : Float = b2.normalDirectionWidth.x;
-        var a4y : Float = b2.normalDirectionWidth.y;
-        var a4z : Float = b2.normalDirectionWidth.z;
+        var a4x:Float = b2.normalDirectionWidth.x;
+        var a4y:Float = b2.normalDirectionWidth.y;
+        var a4z:Float = b2.normalDirectionWidth.z;
         // b2.y
-        var a5x : Float = b2.normalDirectionHeight.x;
-        var a5y : Float = b2.normalDirectionHeight.y;
-        var a5z : Float = b2.normalDirectionHeight.z;
+        var a5x:Float = b2.normalDirectionHeight.x;
+        var a5y:Float = b2.normalDirectionHeight.y;
+        var a5z:Float = b2.normalDirectionHeight.z;
         // b2.z
-        var a6x : Float = b2.normalDirectionDepth.x;
-        var a6y : Float = b2.normalDirectionDepth.y;
-        var a6z : Float = b2.normalDirectionDepth.z;
+        var a6x:Float = b2.normalDirectionDepth.x;
+        var a6y:Float = b2.normalDirectionDepth.y;
+        var a6z:Float = b2.normalDirectionDepth.z;
         // b1.x * b2.x
-        var a7x : Float = a1y * a4z - a1z * a4y;
-        var a7y : Float = a1z * a4x - a1x * a4z;
-        var a7z : Float = a1x * a4y - a1y * a4x;
+        var a7x:Float = a1y * a4z - a1z * a4y;
+        var a7y:Float = a1z * a4x - a1x * a4z;
+        var a7z:Float = a1x * a4y - a1y * a4x;
         // b1.x * b2.y
-        var a8x : Float = a1y * a5z - a1z * a5y;
-        var a8y : Float = a1z * a5x - a1x * a5z;
-        var a8z : Float = a1x * a5y - a1y * a5x;
+        var a8x:Float = a1y * a5z - a1z * a5y;
+        var a8y:Float = a1z * a5x - a1x * a5z;
+        var a8z:Float = a1x * a5y - a1y * a5x;
         // b1.x * b2.z
-        var a9x : Float = a1y * a6z - a1z * a6y;
-        var a9y : Float = a1z * a6x - a1x * a6z;
-        var a9z : Float = a1x * a6y - a1y * a6x;
+        var a9x:Float = a1y * a6z - a1z * a6y;
+        var a9y:Float = a1z * a6x - a1x * a6z;
+        var a9z:Float = a1x * a6y - a1y * a6x;
         // b1.y * b2.x
-        var aax : Float = a2y * a4z - a2z * a4y;
-        var aay : Float = a2z * a4x - a2x * a4z;
-        var aaz : Float = a2x * a4y - a2y * a4x;
+        var aax:Float = a2y * a4z - a2z * a4y;
+        var aay:Float = a2z * a4x - a2x * a4z;
+        var aaz:Float = a2x * a4y - a2y * a4x;
         // b1.y * b2.y
-        var abx : Float = a2y * a5z - a2z * a5y;
-        var aby : Float = a2z * a5x - a2x * a5z;
-        var abz : Float = a2x * a5y - a2y * a5x;
+        var abx:Float = a2y * a5z - a2z * a5y;
+        var aby:Float = a2z * a5x - a2x * a5z;
+        var abz:Float = a2x * a5y - a2y * a5x;
         // b1.y * b2.z
-        var acx : Float = a2y * a6z - a2z * a6y;
-        var acy : Float = a2z * a6x - a2x * a6z;
-        var acz : Float = a2x * a6y - a2y * a6x;
+        var acx:Float = a2y * a6z - a2z * a6y;
+        var acy:Float = a2z * a6x - a2x * a6z;
+        var acz:Float = a2x * a6y - a2y * a6x;
         // b1.z * b2.x
-        var adx : Float = a3y * a4z - a3z * a4y;
-        var ady : Float = a3z * a4x - a3x * a4z;
-        var adz : Float = a3x * a4y - a3y * a4x;
+        var adx:Float = a3y * a4z - a3z * a4y;
+        var ady:Float = a3z * a4x - a3x * a4z;
+        var adz:Float = a3x * a4y - a3y * a4x;
         // b1.z * b2.y
-        var aex : Float = a3y * a5z - a3z * a5y;
-        var aey : Float = a3z * a5x - a3x * a5z;
-        var aez : Float = a3x * a5y - a3y * a5x;
+        var aex:Float = a3y * a5z - a3z * a5y;
+        var aey:Float = a3z * a5x - a3x * a5z;
+        var aez:Float = a3x * a5y - a3y * a5x;
         // b1.z * b2.z
-        var afx : Float = a3y * a6z - a3z * a6y;
-        var afy : Float = a3z * a6x - a3x * a6z;
-        var afz : Float = a3x * a6y - a3y * a6x;
+        var afx:Float = a3y * a6z - a3z * a6y;
+        var afy:Float = a3z * a6x - a3x * a6z;
+        var afz:Float = a3x * a6y - a3y * a6x;
         // right or left flags
-        var right1 : Bool;
-        var right2 : Bool;
-        var right3 : Bool;
-        var right4 : Bool;
-        var right5 : Bool;
-        var right6 : Bool;
-        var right7 : Bool;
-        var right8 : Bool;
-        var right9 : Bool;
-        var righta : Bool;
-        var rightb : Bool;
-        var rightc : Bool;
-        var rightd : Bool;
-        var righte : Bool;
-        var rightf : Bool;
+        var right1:Bool;
+        var right2:Bool;
+        var right3:Bool;
+        var right4:Bool;
+        var right5:Bool;
+        var right6:Bool;
+        var right7:Bool;
+        var right8:Bool;
+        var right9:Bool;
+        var righta:Bool;
+        var rightb:Bool;
+        var rightc:Bool;
+        var rightd:Bool;
+        var righte:Bool;
+        var rightf:Bool;
         // overlapping distances
-        var overlap1 : Float;
-        var overlap2 : Float;
-        var overlap3 : Float;
-        var overlap4 : Float;
-        var overlap5 : Float;
-        var overlap6 : Float;
-        var overlap7 : Float;
-        var overlap8 : Float;
-        var overlap9 : Float;
-        var overlapa : Float;
-        var overlapb : Float;
-        var overlapc : Float;
-        var overlapd : Float;
-        var overlape : Float;
-        var overlapf : Float;
+        var overlap1:Float;
+        var overlap2:Float;
+        var overlap3:Float;
+        var overlap4:Float;
+        var overlap5:Float;
+        var overlap6:Float;
+        var overlap7:Float;
+        var overlap8:Float;
+        var overlap9:Float;
+        var overlapa:Float;
+        var overlapb:Float;
+        var overlapc:Float;
+        var overlapd:Float;
+        var overlape:Float;
+        var overlapf:Float;
         // invalid flags
-        var invalid7 : Bool = false;
-        var invalid8 : Bool = false;
-        var invalid9 : Bool = false;
-        var invalida : Bool = false;
-        var invalidb : Bool = false;
-        var invalidc : Bool = false;
-        var invalidd : Bool = false;
-        var invalide : Bool = false;
-        var invalidf : Bool = false;
+        var invalid7:Bool = false;
+        var invalid8:Bool = false;
+        var invalid9:Bool = false;
+        var invalida:Bool = false;
+        var invalidb:Bool = false;
+        var invalidc:Bool = false;
+        var invalidd:Bool = false;
+        var invalide:Bool = false;
+        var invalidf:Bool = false;
         // temporary variables
-        var len : Float;
-        var len1 : Float;
-        var len2 : Float;
-        var dot1 : Float;
-        var dot2 : Float;
-        var dot3 : Float;
+        var len:Float;
+        var len1:Float;
+        var len2:Float;
+        var dot1:Float;
+        var dot2:Float;
+        var dot3:Float;
         // try axis 1
         len = a1x * dx + a1y * dy + a1z * dz;
         right1 = len > 0;
-        if (!right1)             len = -len;
+        if (!right1) {
+            len = -len;
+		}
         len1 = w1;
         dot1 = a1x * a4x + a1y * a4y + a1z * a4z;
         dot2 = a1x * a5x + a1y * a5y + a1z * a5z;
         dot3 = a1x * a6x + a1y * a6y + a1z * a6z;
-        if (dot1 < 0)             dot1 = -dot1;
-        if (dot2 < 0)             dot2 = -dot2;
-        if (dot3 < 0)             dot3 = -dot3;
+        if (dot1 < 0) {
+			dot1 = -dot1;
+		}
+        if (dot2 < 0) {
+            dot2 = -dot2;
+		}
+        if (dot3 < 0) {
+            dot3 = -dot3;
+		}
         len2 = dot1 * w2 + dot2 * h2 + dot3 * d2;
         overlap1 = len - len1 - len2;
-        if (overlap1 > 0)             return;  // try axis 2
+        if (overlap1 > 0) {
+            return;  // try axis 2
+		}
         
         len = a2x * dx + a2y * dy + a2z * dz;
         right2 = len > 0;
-        if (!right2)             len = -len;
+        if (!right2) {
+            len = -len;
+		}
         len1 = h1;
         dot1 = a2x * a4x + a2y * a4y + a2z * a4z;
         dot2 = a2x * a5x + a2y * a5y + a2z * a5z;
         dot3 = a2x * a6x + a2y * a6y + a2z * a6z;
-        if (dot1 < 0)             dot1 = -dot1;
-        if (dot2 < 0)             dot2 = -dot2;
-        if (dot3 < 0)             dot3 = -dot3;
+        if (dot1 < 0) {
+            dot1 = -dot1;
+		}
+        if (dot2 < 0) {
+            dot2 = -dot2;
+		}
+        if (dot3 < 0) {
+            dot3 = -dot3;
+		}
         len2 = dot1 * w2 + dot2 * h2 + dot3 * d2;
         overlap2 = len - len1 - len2;
-        if (overlap2 > 0)             return;  // try axis 3
+        if (overlap2 > 0) {
+            return;  // try axis 3
+		}
         
         len = a3x * dx + a3y * dy + a3z * dz;
         right3 = len > 0;
-        if (!right3)             len = -len;
+        if (!right3) {
+            len = -len;
+		}
         len1 = d1;
         dot1 = a3x * a4x + a3y * a4y + a3z * a4z;
         dot2 = a3x * a5x + a3y * a5y + a3z * a5z;
         dot3 = a3x * a6x + a3y * a6y + a3z * a6z;
-        if (dot1 < 0)             dot1 = -dot1;
-        if (dot2 < 0)             dot2 = -dot2;
-        if (dot3 < 0)             dot3 = -dot3;
+        if (dot1 < 0) {
+            dot1 = -dot1;
+		}
+        if (dot2 < 0) {
+            dot2 = -dot2;
+		}
+        if (dot3 < 0) {
+            dot3 = -dot3;
+		}
         len2 = dot1 * w2 + dot2 * h2 + dot3 * d2;
         overlap3 = len - len1 - len2;
-        if (overlap3 > 0)             return;  // try axis 4
+        if (overlap3 > 0) {
+            return;  // try axis 4
+		}
         
         len = a4x * dx + a4y * dy + a4z * dz;
         right4 = len > 0;
-        if (!right4)             len = -len;
+        if (!right4) {
+            len = -len;
+		}
         dot1 = a4x * a1x + a4y * a1y + a4z * a1z;
         dot2 = a4x * a2x + a4y * a2y + a4z * a2z;
         dot3 = a4x * a3x + a4y * a3y + a4z * a3z;
-        if (dot1 < 0)             dot1 = -dot1;
-        if (dot2 < 0)             dot2 = -dot2;
-        if (dot3 < 0)             dot3 = -dot3;
+        if (dot1 < 0) {
+            dot1 = -dot1;
+		}
+        if (dot2 < 0) {
+            dot2 = -dot2;
+		}
+        if (dot3 < 0) {
+            dot3 = -dot3;
+		}
         len1 = dot1 * w1 + dot2 * h1 + dot3 * d1;
         len2 = w2;
         overlap4 = (len - len1 - len2) * 1.0;
-        if (overlap4 > 0)             return;  // try axis 5
+        if (overlap4 > 0) {
+            return;  // try axis 5
+		}
         
         len = a5x * dx + a5y * dy + a5z * dz;
         right5 = len > 0;
-        if (!right5)             len = -len;
+        if (!right5) {
+            len = -len;
+		}
         dot1 = a5x * a1x + a5y * a1y + a5z * a1z;
         dot2 = a5x * a2x + a5y * a2y + a5z * a2z;
         dot3 = a5x * a3x + a5y * a3y + a5z * a3z;
-        if (dot1 < 0)             dot1 = -dot1;
-        if (dot2 < 0)             dot2 = -dot2;
-        if (dot3 < 0)             dot3 = -dot3;
+        if (dot1 < 0) {
+            dot1 = -dot1;
+		}
+        if (dot2 < 0) {
+            dot2 = -dot2;
+		}
+        if (dot3 < 0) {
+            dot3 = -dot3;
+		}
         len1 = dot1 * w1 + dot2 * h1 + dot3 * d1;
         len2 = h2;
         overlap5 = (len - len1 - len2) * 1.0;
-        if (overlap5 > 0)             return;  // try axis 6
+        if (overlap5 > 0) {
+            return;  // try axis 6
+		}
         
         len = a6x * dx + a6y * dy + a6z * dz;
         right6 = len > 0;
-        if (!right6)             len = -len;
+        if (!right6) {
+            len = -len;
+		}
         dot1 = a6x * a1x + a6y * a1y + a6z * a1z;
         dot2 = a6x * a2x + a6y * a2y + a6z * a2z;
         dot3 = a6x * a3x + a6y * a3y + a6z * a3z;
-        if (dot1 < 0)             dot1 = -dot1;
-        if (dot2 < 0)             dot2 = -dot2;
-        if (dot3 < 0)             dot3 = -dot3;
+        if (dot1 < 0) {
+            dot1 = -dot1;
+		}
+        if (dot2 < 0) {
+            dot2 = -dot2;
+		}
+        if (dot3 < 0) {
+            dot3 = -dot3;
+		}
         len1 = dot1 * w1 + dot2 * h1 + dot3 * d1;
         len2 = d2;
         overlap6 = (len - len1 - len2) * 1.0;
-        if (overlap6 > 0)             return;  // try axis 7
+        if (overlap6 > 0) {
+            return;  // try axis 7
+		}
         
         len = a7x * a7x + a7y * a7y + a7z * a7z;
         if (len > 1e-5) {
@@ -333,15 +388,23 @@ class BoxBoxCollisionDetector extends CollisionDetector
             a7z *= len;
             len = a7x * dx + a7y * dy + a7z * dz;
             right7 = len > 0;
-            if (!right7)                 len = -len;
+            if (!right7) {
+                len = -len;
+			}
             dot1 = a7x * a2x + a7y * a2y + a7z * a2z;
             dot2 = a7x * a3x + a7y * a3y + a7z * a3z;
-            if (dot1 < 0)                 dot1 = -dot1;
-            if (dot2 < 0)                 dot2 = -dot2;
+            if (dot1 < 0) {
+                dot1 = -dot1;
+			}
+            if (dot2 < 0) {
+                dot2 = -dot2;
+			}
             len1 = dot1 * h1 + dot2 * d1;
             dot1 = a7x * a5x + a7y * a5y + a7z * a5z;
             dot2 = a7x * a6x + a7y * a6y + a7z * a6z;
-            if (dot1 < 0)                 dot1 = -dot1;
+            if (dot1 < 0) {
+                dot1 = -dot1;
+			}
             if (dot2 < 0)                 dot2 = -dot2;
             len2 = dot1 * h2 + dot2 * d2;
             overlap7 = len - len1 - len2;
@@ -364,16 +427,26 @@ class BoxBoxCollisionDetector extends CollisionDetector
             if (!right8)                 len = -len;
             dot1 = a8x * a2x + a8y * a2y + a8z * a2z;
             dot2 = a8x * a3x + a8y * a3y + a8z * a3z;
-            if (dot1 < 0)                 dot1 = -dot1;
-            if (dot2 < 0)                 dot2 = -dot2;
+            if (dot1 < 0) {
+                dot1 = -dot1;
+			}
+            if (dot2 < 0) {
+                dot2 = -dot2;
+			}
             len1 = dot1 * h1 + dot2 * d1;
             dot1 = a8x * a4x + a8y * a4y + a8z * a4z;
             dot2 = a8x * a6x + a8y * a6y + a8z * a6z;
-            if (dot1 < 0)                 dot1 = -dot1;
-            if (dot2 < 0)                 dot2 = -dot2;
+            if (dot1 < 0) {
+                dot1 = -dot1;
+			}
+            if (dot2 < 0) {
+                dot2 = -dot2;
+			}
             len2 = dot1 * w2 + dot2 * d2;
             overlap8 = len - len1 - len2;
-            if (overlap8 > 0)                 return;
+            if (overlap8 > 0) {
+                return;
+			}
         }
         else {
             right8 = false;
@@ -389,19 +462,31 @@ class BoxBoxCollisionDetector extends CollisionDetector
             a9z *= len;
             len = a9x * dx + a9y * dy + a9z * dz;
             right9 = len > 0;
-            if (!right9)                 len = -len;
+            if (!right9) {
+                len = -len;
+			}
             dot1 = a9x * a2x + a9y * a2y + a9z * a2z;
             dot2 = a9x * a3x + a9y * a3y + a9z * a3z;
-            if (dot1 < 0)                 dot1 = -dot1;
-            if (dot2 < 0)                 dot2 = -dot2;
+            if (dot1 < 0) {
+                dot1 = -dot1;
+			}
+            if (dot2 < 0) {
+                dot2 = -dot2;
+			}
             len1 = dot1 * h1 + dot2 * d1;
             dot1 = a9x * a4x + a9y * a4y + a9z * a4z;
             dot2 = a9x * a5x + a9y * a5y + a9z * a5z;
-            if (dot1 < 0)                 dot1 = -dot1;
-            if (dot2 < 0)                 dot2 = -dot2;
+            if (dot1 < 0) {
+                dot1 = -dot1;
+			}
+            if (dot2 < 0) {
+                dot2 = -dot2;
+			}
             len2 = dot1 * w2 + dot2 * h2;
             overlap9 = len - len1 - len2;
-            if (overlap9 > 0)                 return;
+            if (overlap9 > 0) {
+                return;
+			}
         }
         else {
             right9 = false;
@@ -417,19 +502,31 @@ class BoxBoxCollisionDetector extends CollisionDetector
             aaz *= len;
             len = aax * dx + aay * dy + aaz * dz;
             righta = len > 0;
-            if (!righta)                 len = -len;
+            if (!righta) {
+                len = -len;
+			}
             dot1 = aax * a1x + aay * a1y + aaz * a1z;
             dot2 = aax * a3x + aay * a3y + aaz * a3z;
-            if (dot1 < 0)                 dot1 = -dot1;
-            if (dot2 < 0)                 dot2 = -dot2;
+            if (dot1 < 0) {
+                dot1 = -dot1;
+			}
+            if (dot2 < 0) {
+                dot2 = -dot2;
+			}
             len1 = dot1 * w1 + dot2 * d1;
             dot1 = aax * a5x + aay * a5y + aaz * a5z;
             dot2 = aax * a6x + aay * a6y + aaz * a6z;
-            if (dot1 < 0)                 dot1 = -dot1;
-            if (dot2 < 0)                 dot2 = -dot2;
+            if (dot1 < 0) {
+                dot1 = -dot1;
+			}
+            if (dot2 < 0) {
+                dot2 = -dot2;
+			}
             len2 = dot1 * h2 + dot2 * d2;
             overlapa = len - len1 - len2;
-            if (overlapa > 0)                 return;
+            if (overlapa > 0) {
+                return;
+			}
         }
         else {
             righta = false;
@@ -445,19 +542,31 @@ class BoxBoxCollisionDetector extends CollisionDetector
             abz *= len;
             len = abx * dx + aby * dy + abz * dz;
             rightb = len > 0;
-            if (!rightb)                 len = -len;
+            if (!rightb) {
+                len = -len;
+			}
             dot1 = abx * a1x + aby * a1y + abz * a1z;
             dot2 = abx * a3x + aby * a3y + abz * a3z;
-            if (dot1 < 0)                 dot1 = -dot1;
-            if (dot2 < 0)                 dot2 = -dot2;
+            if (dot1 < 0) {
+                dot1 = -dot1;
+			}
+            if (dot2 < 0) {
+                dot2 = -dot2;
+			}
             len1 = dot1 * w1 + dot2 * d1;
             dot1 = abx * a4x + aby * a4y + abz * a4z;
             dot2 = abx * a6x + aby * a6y + abz * a6z;
-            if (dot1 < 0)                 dot1 = -dot1;
-            if (dot2 < 0)                 dot2 = -dot2;
+            if (dot1 < 0) {
+                dot1 = -dot1;
+			}
+            if (dot2 < 0) {
+                dot2 = -dot2;
+			}
             len2 = dot1 * w2 + dot2 * d2;
             overlapb = len - len1 - len2;
-            if (overlapb > 0)                 return;
+            if (overlapb > 0) {
+                return;
+			}
         }
         else {
             rightb = false;
@@ -473,19 +582,31 @@ class BoxBoxCollisionDetector extends CollisionDetector
             acz *= len;
             len = acx * dx + acy * dy + acz * dz;
             rightc = len > 0;
-            if (!rightc)                 len = -len;
+            if (!rightc) {
+                len = -len;
+			}
             dot1 = acx * a1x + acy * a1y + acz * a1z;
             dot2 = acx * a3x + acy * a3y + acz * a3z;
-            if (dot1 < 0)                 dot1 = -dot1;
-            if (dot2 < 0)                 dot2 = -dot2;
+            if (dot1 < 0) {
+                dot1 = -dot1;
+			}
+            if (dot2 < 0) {
+                dot2 = -dot2;
+			}
             len1 = dot1 * w1 + dot2 * d1;
             dot1 = acx * a4x + acy * a4y + acz * a4z;
             dot2 = acx * a5x + acy * a5y + acz * a5z;
-            if (dot1 < 0)                 dot1 = -dot1;
-            if (dot2 < 0)                 dot2 = -dot2;
+            if (dot1 < 0) {
+                dot1 = -dot1;
+			}
+            if (dot2 < 0) {
+                dot2 = -dot2;
+			}
             len2 = dot1 * w2 + dot2 * h2;
             overlapc = len - len1 - len2;
-            if (overlapc > 0)                 return;
+            if (overlapc > 0) {
+                return;
+			}
         }
         else {
             rightc = false;
@@ -501,19 +622,31 @@ class BoxBoxCollisionDetector extends CollisionDetector
             adz *= len;
             len = adx * dx + ady * dy + adz * dz;
             rightd = len > 0;
-            if (!rightd)                 len = -len;
+            if (!rightd) {
+                len = -len;
+			}
             dot1 = adx * a1x + ady * a1y + adz * a1z;
             dot2 = adx * a2x + ady * a2y + adz * a2z;
-            if (dot1 < 0)                 dot1 = -dot1;
-            if (dot2 < 0)                 dot2 = -dot2;
+            if (dot1 < 0) {
+                dot1 = -dot1;
+			}
+            if (dot2 < 0) {
+                dot2 = -dot2;
+			}
             len1 = dot1 * w1 + dot2 * h1;
             dot1 = adx * a5x + ady * a5y + adz * a5z;
             dot2 = adx * a6x + ady * a6y + adz * a6z;
-            if (dot1 < 0)                 dot1 = -dot1;
-            if (dot2 < 0)                 dot2 = -dot2;
+            if (dot1 < 0) {
+                dot1 = -dot1;
+			}
+            if (dot2 < 0) {
+                dot2 = -dot2;
+			}
             len2 = dot1 * h2 + dot2 * d2;
             overlapd = len - len1 - len2;
-            if (overlapd > 0)                 return;
+            if (overlapd > 0) {
+                return;
+			}
         }
         else {
             rightd = false;
@@ -529,19 +662,31 @@ class BoxBoxCollisionDetector extends CollisionDetector
             aez *= len;
             len = aex * dx + aey * dy + aez * dz;
             righte = len > 0;
-            if (!righte)                 len = -len;
+            if (!righte) {
+                len = -len;
+			}
             dot1 = aex * a1x + aey * a1y + aez * a1z;
             dot2 = aex * a2x + aey * a2y + aez * a2z;
-            if (dot1 < 0)                 dot1 = -dot1;
-            if (dot2 < 0)                 dot2 = -dot2;
+            if (dot1 < 0) {
+                dot1 = -dot1;
+			}
+            if (dot2 < 0) {
+                dot2 = -dot2;
+			}
             len1 = dot1 * w1 + dot2 * h1;
             dot1 = aex * a4x + aey * a4y + aez * a4z;
             dot2 = aex * a6x + aey * a6y + aez * a6z;
-            if (dot1 < 0)                 dot1 = -dot1;
-            if (dot2 < 0)                 dot2 = -dot2;
+            if (dot1 < 0) {
+                dot1 = -dot1;
+			}
+            if (dot2 < 0) {
+                dot2 = -dot2;
+			}
             len2 = dot1 * w2 + dot2 * d2;
             overlape = len - len1 - len2;
-            if (overlape > 0)                 return;
+            if (overlape > 0) {
+                return;
+			}
         }
         else {
             righte = false;
@@ -557,19 +702,31 @@ class BoxBoxCollisionDetector extends CollisionDetector
             afz *= len;
             len = afx * dx + afy * dy + afz * dz;
             rightf = len > 0;
-            if (!rightf)                 len = -len;
+            if (!rightf) {
+                len = -len;
+			}
             dot1 = afx * a1x + afy * a1y + afz * a1z;
             dot2 = afx * a2x + afy * a2y + afz * a2z;
-            if (dot1 < 0)                 dot1 = -dot1;
-            if (dot2 < 0)                 dot2 = -dot2;
+            if (dot1 < 0) {
+                dot1 = -dot1;
+			}
+            if (dot2 < 0) {
+                dot2 = -dot2;
+			}
             len1 = dot1 * w1 + dot2 * h1;
             dot1 = afx * a4x + afy * a4y + afz * a4z;
             dot2 = afx * a5x + afy * a5y + afz * a5z;
-            if (dot1 < 0)                 dot1 = -dot1;
-            if (dot2 < 0)                 dot2 = -dot2;
+            if (dot1 < 0) {
+                dot1 = -dot1;
+			}
+            if (dot2 < 0) {
+                dot2 = -dot2;
+			}
             len2 = dot1 * w2 + dot2 * h2;
             overlapf = len - len1 - len2;
-            if (overlapf > 0)                 return;
+            if (overlapf > 0) {
+                return;
+			}
         }
         else {
             rightf = false;
@@ -577,10 +734,10 @@ class BoxBoxCollisionDetector extends CollisionDetector
             invalidf = true;
         }  // boxes are overlapping  
         
-        var depth : Float = overlap1;
-        var depth2 : Float = overlap1;
-        var minIndex : Int = 0;
-        var right : Bool = right1;
+        var depth:Float = overlap1;
+        var depth2:Float = overlap1;
+        var minIndex:Int = 0;
+        var right:Bool = right1;
         if (overlap2 > depth2) {
             depth = overlap2;
             depth2 = overlap2;
@@ -665,31 +822,30 @@ class BoxBoxCollisionDetector extends CollisionDetector
             right = rightf;
         }  // normal  
         
-        var nx : Float = 0;
-        var ny : Float = 0;
-        var nz : Float = 0;
+        var nx:Float = 0;
+        var ny:Float = 0;
+        var nz:Float = 0;
         // edge line or face side normal
-        var n1x : Float = 0;
-        var n1y : Float = 0;
-        var n1z : Float = 0;
-        var n2x : Float = 0;
-        var n2y : Float = 0;
-        var n2z : Float = 0;
+        var n1x:Float = 0;
+        var n1y:Float = 0;
+        var n1z:Float = 0;
+        var n2x:Float = 0;
+        var n2y:Float = 0;
+        var n2z:Float = 0;
         // center of current face
-        var cx : Float = 0;
-        var cy : Float = 0;
-        var cz : Float = 0;
+        var cx:Float = 0;
+        var cy:Float = 0;
+        var cz:Float = 0;
         // face side
-        var s1x : Float = 0;
-        var s1y : Float = 0;
-        var s1z : Float = 0;
-        var s2x : Float = 0;
-        var s2y : Float = 0;
-        var s2z : Float = 0;
+        var s1x:Float = 0;
+        var s1y:Float = 0;
+        var s1z:Float = 0;
+        var s2x:Float = 0;
+        var s2y:Float = 0;
+        var s2z:Float = 0;
         // swap b1 b2
-        var swap : Bool = false;
-        switch (minIndex)
-        {
+        var swap:Bool = false;
+        switch (minIndex) {
             case 0:  // b1.x * b2  
                 if (right) {
                     cx = p1x + d1x;
@@ -719,6 +875,7 @@ class BoxBoxCollisionDetector extends CollisionDetector
                 n2x = -a3x;
                 n2y = -a3y;
                 n2z = -a3z;
+				
             case 1:  // b1.y * b2  
                 if (right) {
                     cx = p1x + d2x;
@@ -748,6 +905,7 @@ class BoxBoxCollisionDetector extends CollisionDetector
                 n2x = -a3x;
                 n2y = -a3y;
                 n2z = -a3z;
+				
             case 2:  // b1.z * b2  
                 if (right) {
                     cx = p1x + d3x;
@@ -777,6 +935,7 @@ class BoxBoxCollisionDetector extends CollisionDetector
                 n2x = -a2x;
                 n2y = -a2y;
                 n2z = -a2z;
+				
             case 3:  // b2.x * b1  
                 swap = true;
                 if (!right) {
@@ -807,6 +966,7 @@ class BoxBoxCollisionDetector extends CollisionDetector
                 n2x = -a6x;
                 n2y = -a6y;
                 n2z = -a6z;
+				
             case 4:  // b2.y * b1  
                 swap = true;
                 if (!right) {
@@ -837,6 +997,7 @@ class BoxBoxCollisionDetector extends CollisionDetector
                 n2x = -a6x;
                 n2y = -a6y;
                 n2z = -a6z;
+				
             case 5:  // b2.z * b1  
                 swap = true;
                 if (!right) {
@@ -867,6 +1028,7 @@ class BoxBoxCollisionDetector extends CollisionDetector
                 n2x = -a5x;
                 n2y = -a5y;
                 n2z = -a5z;
+				
             case 6:  // b1.x * b2.x  
                 nx = a7x;
                 ny = a7y;
@@ -877,6 +1039,7 @@ class BoxBoxCollisionDetector extends CollisionDetector
                 n2x = a4x;
                 n2y = a4y;
                 n2z = a4z;
+				
             case 7:  // b1.x * b2.y  
                 nx = a8x;
                 ny = a8y;
@@ -887,6 +1050,7 @@ class BoxBoxCollisionDetector extends CollisionDetector
                 n2x = a5x;
                 n2y = a5y;
                 n2z = a5z;
+				
             case 8:  // b1.x * b2.z  
                 nx = a9x;
                 ny = a9y;
@@ -897,6 +1061,7 @@ class BoxBoxCollisionDetector extends CollisionDetector
                 n2x = a6x;
                 n2y = a6y;
                 n2z = a6z;
+				
             case 9:  // b1.y * b2.x  
                 nx = aax;
                 ny = aay;
@@ -907,6 +1072,7 @@ class BoxBoxCollisionDetector extends CollisionDetector
                 n2x = a4x;
                 n2y = a4y;
                 n2z = a4z;
+				
             case 10:  // b1.y * b2.y  
                 nx = abx;
                 ny = aby;
@@ -917,6 +1083,7 @@ class BoxBoxCollisionDetector extends CollisionDetector
                 n2x = a5x;
                 n2y = a5y;
                 n2z = a5z;
+				
             case 11:  // b1.y * b2.z  
                 nx = acx;
                 ny = acy;
@@ -927,6 +1094,7 @@ class BoxBoxCollisionDetector extends CollisionDetector
                 n2x = a6x;
                 n2y = a6y;
                 n2z = a6z;
+				
             case 12:  // b1.z * b2.x  
                 nx = adx;
                 ny = ady;
@@ -937,6 +1105,7 @@ class BoxBoxCollisionDetector extends CollisionDetector
                 n2x = a4x;
                 n2y = a4y;
                 n2z = a4z;
+				
             case 13:  // b1.z * b2.y  
                 nx = aex;
                 ny = aey;
@@ -947,6 +1116,7 @@ class BoxBoxCollisionDetector extends CollisionDetector
                 n2x = a5x;
                 n2y = a5y;
                 n2z = a5z;
+				
             case 14:  // b1.z * b2.z  
                 nx = afx;
                 ny = afy;
@@ -958,7 +1128,7 @@ class BoxBoxCollisionDetector extends CollisionDetector
                 n2y = a6y;
                 n2z = a6z;
         }
-        var v : Vec3;
+        var v:Vec3 = null;
         if (minIndex > 5) {  // edge-edge collision  
             if (!right) {
                 nx = -nx;
@@ -966,17 +1136,17 @@ class BoxBoxCollisionDetector extends CollisionDetector
                 nz = -nz;
             }  // temp  
             
-            var distance : Float;
-            var maxDistance : Float;
-            var vx : Float;
-            var vy : Float;
-            var vz : Float;
-            var v1x : Float;
-            var v1y : Float;
-            var v1z : Float;
-            var v2x : Float;
-            var v2y : Float;
-            var v2z : Float;
+            var distance:Float;
+            var maxDistance:Float;
+            var vx:Float;
+            var vy:Float;
+            var vz:Float;
+            var v1x:Float;
+            var v1y:Float;
+            var v1z:Float;
+            var v2x:Float;
+            var v2y:Float;
+            var v2z:Float;
             // get support vertex 1
             v = b1.vertex1;
             v1x = v.x;
@@ -1148,29 +1318,29 @@ class BoxBoxCollisionDetector extends CollisionDetector
             vy = v2y - v1y;
             vz = v2z - v1z;
             dot1 = n1x * n2x + n1y * n2y + n1z * n2z;
-            var t : Float = (vx * (n1x - n2x * dot1) + vy * (n1y - n2y * dot1) + vz * (n1z - n2z * dot1)) / (1 - dot1 * dot1);
+            var t:Float = (vx * (n1x - n2x * dot1) + vy * (n1y - n2y * dot1) + vz * (n1z - n2z * dot1)) / (1 - dot1 * dot1);
             manifold.addPoint(v1x + n1x * t + nx * depth * 0.5, v1y + n1y * t + ny * depth * 0.5, v1z + n1z * t + nz * depth * 0.5, nx, ny, nz, depth, false);
             return;
         }  // target quad    // now detect face-face collision...  
         
         
         
-        var q1x : Float = 0;
-        var q1y : Float = 0;
-        var q1z : Float = 0;
-        var q2x : Float = 0;
-        var q2y : Float = 0;
-        var q2z : Float = 0;
-        var q3x : Float = 0;
-        var q3y : Float = 0;
-        var q3z : Float = 0;
-        var q4x : Float = 0;
-        var q4y : Float = 0;
-        var q4z : Float = 0;
+        var q1x:Float = 0;
+        var q1y:Float = 0;
+        var q1z:Float = 0;
+        var q2x:Float = 0;
+        var q2y:Float = 0;
+        var q2z:Float = 0;
+        var q3x:Float = 0;
+        var q3y:Float = 0;
+        var q3z:Float = 0;
+        var q4x:Float = 0;
+        var q4y:Float = 0;
+        var q4z:Float = 0;
         // search support face and vertex
-        var minDot : Float = 1;
-        var dot : Float = 0;
-        var minDotIndex : Int = 0;
+        var minDot:Float = 1;
+        var dot:Float = 0;
+        var minDotIndex:Int = 0;
         if (swap) {
             dot = a1x * nx + a1y * ny + a1z * nz;
             if (dot < minDot) {
@@ -1199,8 +1369,8 @@ class BoxBoxCollisionDetector extends CollisionDetector
                 minDot = -dot;
                 minDotIndex = 5;
             }
-            switch (minDotIndex)
-            {
+			
+            switch (minDotIndex) {
                 case 0:  // x+ face  
                     v = b1.vertex1;
                     q1x = v.x;
@@ -1218,6 +1388,7 @@ class BoxBoxCollisionDetector extends CollisionDetector
                     q4x = v.x;
                     q4y = v.y;
                     q4z = v.z;
+					
                 case 1:  // x- face  
                     v = b1.vertex6;
                     q1x = v.x;
@@ -1235,6 +1406,7 @@ class BoxBoxCollisionDetector extends CollisionDetector
                     q4x = v.x;
                     q4y = v.y;
                     q4z = v.z;
+					
                 case 2:  // y+ face  
                     v = b1.vertex5;
                     q1x = v.x;
@@ -1252,6 +1424,7 @@ class BoxBoxCollisionDetector extends CollisionDetector
                     q4x = v.x;
                     q4y = v.y;
                     q4z = v.z;
+					
                 case 3:  // y- face  
                     v = b1.vertex8;
                     q1x = v.x;
@@ -1269,6 +1442,7 @@ class BoxBoxCollisionDetector extends CollisionDetector
                     q4x = v.x;
                     q4y = v.y;
                     q4z = v.z;
+					
                 case 4:  // z+ face  
                     v = b1.vertex5;
                     q1x = v.x;
@@ -1286,6 +1460,7 @@ class BoxBoxCollisionDetector extends CollisionDetector
                     q4x = v.x;
                     q4y = v.y;
                     q4z = v.z;
+					
                 case 5:  // z- face  
                     v = b1.vertex2;
                     q1x = v.x;
@@ -1333,8 +1508,7 @@ class BoxBoxCollisionDetector extends CollisionDetector
                 minDot = -dot;
                 minDotIndex = 5;
             }
-            switch (minDotIndex)
-            {
+            switch (minDotIndex) {
                 case 0:  // x+ face  
                     v = b2.vertex1;
                     q1x = v.x;
@@ -1352,6 +1526,7 @@ class BoxBoxCollisionDetector extends CollisionDetector
                     q4x = v.x;
                     q4y = v.y;
                     q4z = v.z;
+					
                 case 1:  // x- face  
                     v = b2.vertex6;
                     q1x = v.x;
@@ -1369,6 +1544,7 @@ class BoxBoxCollisionDetector extends CollisionDetector
                     q4x = v.x;
                     q4y = v.y;
                     q4z = v.z;
+					
                 case 2:  // y+ face  
                     v = b2.vertex5;
                     q1x = v.x;
@@ -1386,6 +1562,7 @@ class BoxBoxCollisionDetector extends CollisionDetector
                     q4x = v.x;
                     q4y = v.y;
                     q4z = v.z;
+					
                 case 3:  // y- face  
                     v = b2.vertex8;
                     q1x = v.x;
@@ -1403,6 +1580,7 @@ class BoxBoxCollisionDetector extends CollisionDetector
                     q4x = v.x;
                     q4y = v.y;
                     q4z = v.z;
+					
                 case 4:  // z+ face  
                     v = b2.vertex5;
                     q1x = v.x;
@@ -1420,6 +1598,7 @@ class BoxBoxCollisionDetector extends CollisionDetector
                     q4x = v.x;
                     q4y = v.y;
                     q4z = v.z;
+					
                 case 5:  // z- face  
                     v = b2.vertex2;
                     q1x = v.x;
@@ -1440,15 +1619,15 @@ class BoxBoxCollisionDetector extends CollisionDetector
             }
         }  // clip vertices  
         
-        var numClipVertices : Int;
-        var numAddedClipVertices : Int;
-        var index : Int;
-        var x1 : Float;
-        var y1 : Float;
-        var z1 : Float;
-        var x2 : Float;
-        var y2 : Float;
-        var z2 : Float;
+        var numClipVertices:Int;
+        var numAddedClipVertices:Int;
+        var index:Int;
+        var x1:Float;
+        var y1:Float;
+        var z1:Float;
+        var x2:Float;
+        var y2:Float;
+        var z2:Float;
         clipVertices1[0] = q1x;
         clipVertices1[1] = q1y;
         clipVertices1[2] = q1z;
@@ -1509,8 +1688,11 @@ class BoxBoxCollisionDetector extends CollisionDetector
             z1 = z2;
             dot1 = dot2;
         }
+		
         numClipVertices = numAddedClipVertices;
-        if (numClipVertices == 0)             return;
+        if (numClipVertices == 0) {
+            return;
+		}
         numAddedClipVertices = 0;
         index = (numClipVertices - 1) * 3;
         x1 = clipVertices2[index];
@@ -1561,7 +1743,9 @@ class BoxBoxCollisionDetector extends CollisionDetector
             dot1 = dot2;
         }
         numClipVertices = numAddedClipVertices;
-        if (numClipVertices == 0)             return;
+        if (numClipVertices == 0) {
+            return;
+		}
         numAddedClipVertices = 0;
         index = (numClipVertices - 1) * 3;
         x1 = clipVertices1[index];
@@ -1612,7 +1796,9 @@ class BoxBoxCollisionDetector extends CollisionDetector
             dot1 = dot2;
         }
         numClipVertices = numAddedClipVertices;
-        if (numClipVertices == 0)             return;
+        if (numClipVertices == 0) {
+            return;
+		}
         numAddedClipVertices = 0;
         index = (numClipVertices - 1) * 3;
         x1 = clipVertices2[index];
@@ -1664,12 +1850,14 @@ class BoxBoxCollisionDetector extends CollisionDetector
         }
         numClipVertices = numAddedClipVertices;
         if (swap) {
-            var tb : BoxShape = b1;
+            var tb:BoxShape = b1;
             b1 = b2;
             b2 = tb;
         }
-        if (numClipVertices == 0)             return;
-        var flipped : Bool = b1 != shape1;
+        if (numClipVertices == 0) {
+            return;
+		}
+        var flipped:Bool = b1 != shape1;
         if (numClipVertices > 4) {
             // sweep vertices
             x1 = (q1x + q2x + q3x + q4x) * 0.25;
@@ -1681,11 +1869,11 @@ class BoxBoxCollisionDetector extends CollisionDetector
             n2x = q2x - x1;
             n2y = q2y - y1;
             n2z = q2z - z1;
-            var index1 : Int = 0;
-            var index2 : Int = 0;
-            var index3 : Int = 0;
-            var index4 : Int = 0;
-            var maxDot : Float = -INF;
+            var index1:Int = 0;
+            var index2:Int = 0;
+            var index3:Int = 0;
+            var index4:Int = 0;
+            var maxDot:Float = -INF;
             minDot = INF;
             for (i in 0...numClipVertices){
                 used[i] = false;
@@ -1708,8 +1896,9 @@ class BoxBoxCollisionDetector extends CollisionDetector
             maxDot = -INF;
             minDot = INF;
             for (i in 0...numClipVertices){
-                if (used[i])                     {/*i++;*/continue;
-                };
+                if (used[i]) {
+					/*i++;*/continue;
+                }
                 index = i * 3;
                 x1 = clipVertices1[index];
                 y1 = clipVertices1[index + 1];

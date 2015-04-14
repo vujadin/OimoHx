@@ -35,36 +35,34 @@ class SphereShape extends Shape {
         super(config);
         this.radius = radius;
         type = Shape.SHAPE_SPHERE;
+		
+		this.updateProxy = _updateProxy;
+		
+		this.calculateMassInfo = _calculateMassInfo;
     }
-    
-    /**
-	 * @inheritDoc
-	 */
-    override public function calculateMassInfo(out:MassInfo) {
-        var mass:Float = 4 / 3 * Math.PI * radius * radius * radius * density;
-        out.mass = mass;
-        var inertia:Float = mass * radius * radius * 2 / 5;
-        out.inertia.init(
-			inertia, 0, 0,
-			0, inertia, 0,
-			0, 0, inertia
-		);
-    }
-    
-    /**
-	 * @inheritDoc
-	 */
-    override public function updateProxy() {
-        aabb.init(
+	
+	inline function _updateProxy() {
+		aabb.init(
 			position.x - radius - 0.005, position.x + radius + 0.005,
 			position.y - radius - 0.005, position.y + radius + 0.005,
 			position.z - radius - 0.005, position.z + radius + 0.005
 		);
 		
-        if (proxy != null) {
-            proxy.update();
-        }
-    }
+		if (proxy != null) {
+			proxy.update();
+		}
+	}
 	
+	inline function _calculateMassInfo(out:MassInfo) {
+		var mass:Float = 4 / 3 * Math.PI * radius * radius * radius * density;
+		out.mass = mass;
+		var inertia:Float = mass * radius * radius * 2 / 5;
+		out.inertia.init(
+			inertia, 0, 0,
+			0, inertia, 0,
+			0, 0, inertia
+		);
+	}
+    	
 }
 

@@ -18,27 +18,24 @@
  */
 package oimohx.physics.collision.broadphase;
 
-
 import oimohx.physics.collision.shape.Shape;
+
 /**
-	 * A pair of shapes that may collide.
-	 * @author saharan
+ * A pair of shapes that may collide.
+ * @author saharan
+ */
+class Pair {
+    /**
+	 * The first shape.
 	 */
-class Pair
-{
+    public var shape1:Shape;    
     /**
-		 * The first shape.
-		 */
-    public var shape1 : Shape;
+	 * The second shape.
+	 */
+    public var shape2:Shape;
     
-    /**
-		 * The second shape.
-		 */
-    public var shape2 : Shape;
-    
-    public function new()
-    {
+    public function new() {
         
     }
+	
 }
-

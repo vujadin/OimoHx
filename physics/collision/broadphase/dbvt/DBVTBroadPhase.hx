@@ -20,44 +20,44 @@ package oimohx.physics.collision.broadphase.dbvt;
 
 import oimohx.physics.collision.broadphase.dbvt.DBVTNode;
 import oimohx.physics.collision.broadphase.dbvt.DBVTProxy;
-
 import oimohx.physics.collision.broadphase.AABB;
 import oimohx.physics.collision.broadphase.BroadPhase;
 import oimohx.physics.collision.broadphase.Proxy;
 import oimohx.physics.collision.shape.Shape;
+
 /**
-	 * A broad-phase algorithm using dynamic bounding volume tree.
-	 * @author saharan
-	 */
-class DBVTBroadPhase extends BroadPhase
-{
-    public var tree : DBVT;
-    private var stack : Array<DBVTNode>;
-    private var maxStack : Int;
-    private var leaves : Array<DBVTNode>;
-    private var numLeaves : Int;
-    private var maxLeaves : Int;
+ * A broad-phase algorithm using dynamic bounding volume tree.
+ * @author saharan
+ */
+class DBVTBroadPhase extends BroadPhase {
+	
+    public var tree:DBVT;
+    private var stack:Array<DBVTNode>;
+    private var maxStack:Int;
+    private var leaves:Array<DBVTNode>;
+    private var numLeaves:Int;
+    private var maxLeaves:Int;
+	
     
-    public function new()
-    {
+    public function new() {
         super();
         tree = new DBVT();
         maxStack = 256;
-        stack = new Array<DBVTNode>();
+        stack = [];
         maxLeaves = 256;
-        leaves = new Array<DBVTNode>();
+        leaves = [];
     }
     
-    override public function createProxy(shape : Shape) : Proxy{
+    override public function createProxy(shape:Shape):Proxy {
         return new DBVTProxy(shape);
     }
     
-    override public function addProxy(proxy : Proxy) : Void{
-        var p : DBVTProxy = cast((proxy), DBVTProxy);
+    override public function addProxy(proxy:Proxy) {
+        var p:DBVTProxy = cast((proxy), DBVTProxy);
         tree.insertLeaf(p.leaf);
         if (numLeaves == maxLeaves) {
             maxLeaves <<= 1;
-            var newLeaves : Array<DBVTNode> = new Array<DBVTNode>();
+            var newLeaves:Array<DBVTNode> = new Array<DBVTNode>();
             for (i in 0...numLeaves){
                 newLeaves[i] = leaves[i];
             }
@@ -66,8 +66,8 @@ class DBVTBroadPhase extends BroadPhase
         leaves[numLeaves++] = p.leaf;
     }
     
-    override public function removeProxy(proxy : Proxy) : Void{
-        var p : DBVTProxy = cast((proxy), DBVTProxy);
+    override public function removeProxy(proxy:Proxy) {
+        var p:DBVTProxy = cast((proxy), DBVTProxy);
         tree.deleteLeaf(p.leaf);
         for (i in 0...numLeaves){
             if (leaves[i] == p.leaf) {
@@ -78,17 +78,19 @@ class DBVTBroadPhase extends BroadPhase
         }
     }
     
-    override private function collectPairs() : Void{
-        if (numLeaves < 2)             return;
+    override private function collectPairs() {
+        if (numLeaves < 2) {
+            return;
+		}
         for (i in 0...numLeaves){
-            var leaf : DBVTNode = leaves[i];
-            var trueB : AABB = leaf.proxy.aabb;
-            var leafB : AABB = leaf.aabb;
+            var leaf:DBVTNode = leaves[i];
+            var trueB:AABB = leaf.proxy.aabb;
+            var leafB:AABB = leaf.aabb;
             if (
                 trueB.minX < leafB.minX || trueB.maxX > leafB.maxX ||
                 trueB.minY < leafB.minY || trueB.maxY > leafB.maxY ||
                 trueB.minZ < leafB.minZ || trueB.maxZ > leafB.maxZ) {  // the leaf needs correcting  
-                var margin : Float = 0.1;
+                var margin:Float = 0.1;
                 tree.deleteLeaf(leaf);
                 leafB.minX = trueB.minX - margin;
                 leafB.maxX = trueB.maxX + margin;
@@ -102,21 +104,21 @@ class DBVTBroadPhase extends BroadPhase
         }
     }
     
-    private function collide(node1 : DBVTNode, node2 : DBVTNode) : Void{
-        var stackCount : Int = 2;
+    private function collide(node1:DBVTNode, node2:DBVTNode) {
+        var stackCount:Int = 2;
         stack[0] = node1;
         stack[1] = node2;
         while (stackCount > 0){
-            var n1 : DBVTNode = stack[--stackCount];
-            var n2 : DBVTNode = stack[--stackCount];
-            var l1 : Bool = n1.proxy != null;
-            var l2 : Bool = n2.proxy != null;
+            var n1:DBVTNode = stack[--stackCount];
+            var n2:DBVTNode = stack[--stackCount];
+            var l1:Bool = n1.proxy != null;
+            var l2:Bool = n2.proxy != null;
             numPairChecks++;
             if (l1 && l2) {
-                var s1 : Shape = n1.proxy.shape;
-                var s2 : Shape = n2.proxy.shape;
-                var b1 : AABB = s1.aabb;
-                var b2 : AABB = s2.aabb;
+                var s1:Shape = n1.proxy.shape;
+                var s2:Shape = n2.proxy.shape;
+                var b1:AABB = s1.aabb;
+                var b2:AABB = s2.aabb;
                 if (
                     s1 == s2 ||
                     b1.maxX < b2.minX || b1.minX > b2.maxX ||
@@ -138,7 +140,7 @@ class DBVTBroadPhase extends BroadPhase
                 }
                 if (stackCount + 4 >= maxStack) {  // expand the stack  
                     maxStack <<= 1;
-                    var newStack : Array<DBVTNode> = new Array<DBVTNode>();
+                    var newStack:Array<DBVTNode> = [];
                     for (i in 0...stackCount){
                         newStack[i] = stack[i];
                     }
@@ -159,5 +161,5 @@ class DBVTBroadPhase extends BroadPhase
             }
         }
     }
+	
 }
-

@@ -21,26 +21,21 @@ package oimohx.physics.collision.broadphase.dbvt;
 
 import oimohx.physics.collision.broadphase.Proxy;
 import oimohx.physics.collision.shape.Shape;
+
 /**
-	 * A proxy for dynamic bounding volume tree broad-phase.
-	 * @author saharan
-	 */
-class DBVTProxy extends Proxy
-{
+ * A proxy for dynamic bounding volume tree broad-phase.
+ * @author saharan
+ */
+class DBVTProxy extends Proxy {
     /**
-		 * The leaf of the proxy.
-		 */
-    public var leaf : DBVTNode;
+	 * The leaf of the proxy.
+	 */
+    public var leaf:DBVTNode;
     
-    public function new(shape : Shape)
-    {
+    public function new(shape:Shape) {
         super(shape);
         leaf = new DBVTNode();
         leaf.proxy = this;
     }
-    
-    override public function update() : Void{
-        
-    }
+	
 }
-

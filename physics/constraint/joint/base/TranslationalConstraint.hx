@@ -1,98 +1,98 @@
 package oimohx.physics.constraint.joint.base;
 
-
 import oimohx.math.Mat33;
 import oimohx.math.Vec3;
 import oimohx.physics.constraint.joint.Joint;
 import oimohx.physics.constraint.joint.LimitMotor;
 import oimohx.physics.dynamics.RigidBody;
+
 /**
-	 * A translational constraint for various joints.
-	 * @author saharan
-	 */
-class TranslationalConstraint
-{
-    private var limitMotor : LimitMotor;
-    private var b1 : RigidBody;
-    private var b2 : RigidBody;
-    private var p1 : Vec3;
-    private var p2 : Vec3;
-    private var r1 : Vec3;
-    private var r2 : Vec3;
-    private var l1 : Vec3;
-    private var l2 : Vec3;
-    private var a1 : Vec3;
-    private var a2 : Vec3;
-    private var i1 : Mat33;
-    private var i2 : Mat33;
+ * A translational constraint for various joints.
+ * @author saharan
+ */
+class TranslationalConstraint {
+	
+    private var limitMotor:LimitMotor;
+    private var b1:RigidBody;
+    private var b2:RigidBody;
+    private var p1:Vec3;
+    private var p2:Vec3;
+    private var r1:Vec3;
+    private var r2:Vec3;
+    private var l1:Vec3;
+    private var l2:Vec3;
+    private var a1:Vec3;
+    private var a2:Vec3;
+    private var i1:Mat33;
+    private var i2:Mat33;
     
-    private var cfm : Float;
+    private var cfm:Float;
     
-    private var m1 : Float;
-    private var m2 : Float;
-    private var i1e00 : Float;
-    private var i1e01 : Float;
-    private var i1e02 : Float;
-    private var i1e10 : Float;
-    private var i1e11 : Float;
-    private var i1e12 : Float;
-    private var i1e20 : Float;
-    private var i1e21 : Float;
-    private var i1e22 : Float;
-    private var i2e00 : Float;
-    private var i2e01 : Float;
-    private var i2e02 : Float;
-    private var i2e10 : Float;
-    private var i2e11 : Float;
-    private var i2e12 : Float;
-    private var i2e20 : Float;
-    private var i2e21 : Float;
-    private var i2e22 : Float;
-    private var motorDenom : Float;
-    private var invMotorDenom : Float;
-    private var invDenom : Float;
-    private var ax : Float;
-    private var ay : Float;
-    private var az : Float;
-    private var r1x : Float;
-    private var r1y : Float;
-    private var r1z : Float;
-    private var r2x : Float;
-    private var r2y : Float;
-    private var r2z : Float;
-    private var t1x : Float;
-    private var t1y : Float;
-    private var t1z : Float;
-    private var t2x : Float;
-    private var t2y : Float;
-    private var t2z : Float;
-    private var l1x : Float;
-    private var l1y : Float;
-    private var l1z : Float;
-    private var l2x : Float;
-    private var l2y : Float;
-    private var l2z : Float;
-    private var a1x : Float;
-    private var a1y : Float;
-    private var a1z : Float;
-    private var a2x : Float;
-    private var a2y : Float;
-    private var a2z : Float;
+    private var m1:Float;
+    private var m2:Float;
+    private var i1e00:Float;
+    private var i1e01:Float;
+    private var i1e02:Float;
+    private var i1e10:Float;
+    private var i1e11:Float;
+    private var i1e12:Float;
+    private var i1e20:Float;
+    private var i1e21:Float;
+    private var i1e22:Float;
+    private var i2e00:Float;
+    private var i2e01:Float;
+    private var i2e02:Float;
+    private var i2e10:Float;
+    private var i2e11:Float;
+    private var i2e12:Float;
+    private var i2e20:Float;
+    private var i2e21:Float;
+    private var i2e22:Float;
+    private var motorDenom:Float;
+    private var invMotorDenom:Float;
+    private var invDenom:Float;
+    private var ax:Float;
+    private var ay:Float;
+    private var az:Float;
+    private var r1x:Float;
+    private var r1y:Float;
+    private var r1z:Float;
+    private var r2x:Float;
+    private var r2y:Float;
+    private var r2z:Float;
+    private var t1x:Float;
+    private var t1y:Float;
+    private var t1z:Float;
+    private var t2x:Float;
+    private var t2y:Float;
+    private var t2z:Float;
+    private var l1x:Float;
+    private var l1y:Float;
+    private var l1z:Float;
+    private var l2x:Float;
+    private var l2y:Float;
+    private var l2z:Float;
+    private var a1x:Float;
+    private var a1y:Float;
+    private var a1z:Float;
+    private var a2x:Float;
+    private var a2y:Float;
+    private var a2z:Float;
     
-    private var lowerLimit : Float;
-    private var upperLimit : Float;
-    private var limitVelocity : Float;
-    private var limitImpulse : Float;
-    private var limitState : Int;  // -1: at lower, 0: locked, 1: at upper, 2: free  
+    private var lowerLimit:Float;
+    private var upperLimit:Float;
+    private var limitVelocity:Float;
+    private var limitImpulse:Float;
+    private var limitState:Int;  // -1: at lower, 0: locked, 1: at upper, 2: free  
     
-    private var enableMotor : Bool;
-    private var motorSpeed : Float;
-    private var maxMotorForce : Float;
-    private var maxMotorImpulse : Float;
-    private var motorImpulse : Float;
+    private var enableMotor:Bool;
+    private var motorSpeed:Float;
+    private var maxMotorForce:Float;
+    private var maxMotorImpulse:Float;
+    private var motorImpulse:Float;
+	
     
-    public function new(joint : Joint, limitMotor : LimitMotor)
-    {
+    public function new(joint:Joint, limitMotor:LimitMotor) {
         this.limitMotor = limitMotor;
         b1 = joint.body1;
         b2 = joint.body2;
@@ -110,7 +110,7 @@ class TranslationalConstraint
         motorImpulse = 0;
     }
     
-    public function preSolve(timeStep : Float, invTimeStep : Float) : Void{
+    public function preSolve(timeStep:Float, invTimeStep:Float) {
         ax = limitMotor.axis.x;
         ay = limitMotor.axis.y;
         az = limitMotor.axis.z;
@@ -140,14 +140,14 @@ class TranslationalConstraint
         i2e21 = i2.e21;
         i2e22 = i2.e22;
         
-        var dx : Float = p2.x - p1.x;
-        var dy : Float = p2.y - p1.y;
-        var dz : Float = p2.z - p1.z;
-        var d : Float = dx * ax + dy * ay + dz * az;
+        var dx:Float = p2.x - p1.x;
+        var dy:Float = p2.y - p1.y;
+        var dz:Float = p2.z - p1.z;
+        var d:Float = dx * ax + dy * ay + dz * az;
         
-        var frequency : Float = limitMotor.frequency;
-        var enableSpring : Bool = frequency > 0;
-        var enableLimit : Bool = lowerLimit <= upperLimit;
+        var frequency:Float = limitMotor.frequency;
+        var enableSpring:Bool = frequency > 0;
+        var enableLimit:Bool = lowerLimit <= upperLimit;
         
         if (enableSpring && d > 20 || d < -20) {
             enableSpring = false;
@@ -160,7 +160,9 @@ class TranslationalConstraint
                     limitImpulse = 0;
                 }
                 limitVelocity = lowerLimit - d;
-                if (!enableSpring)                     d = lowerLimit;
+                if (!enableSpring) {
+                    d = lowerLimit;
+				}
             }
             else if (d < lowerLimit) {
                 if (limitState != -1) {
@@ -168,7 +170,9 @@ class TranslationalConstraint
                     limitImpulse = 0;
                 }
                 limitVelocity = lowerLimit - d;
-                if (!enableSpring)                     d = lowerLimit;
+                if (!enableSpring) {
+                    d = lowerLimit;
+				}
             }
             else if (d > upperLimit) {
                 if (limitState != 1) {
@@ -176,7 +180,9 @@ class TranslationalConstraint
                     limitImpulse = 0;
                 }
                 limitVelocity = upperLimit - d;
-                if (!enableSpring)                     d = upperLimit;
+                if (!enableSpring) {
+					d = upperLimit;
+				}
             }
             else {
                 limitState = 2;
@@ -184,9 +190,15 @@ class TranslationalConstraint
                 limitVelocity = 0;
             }
             if (!enableSpring) {
-                if (limitVelocity > 0.005)                     limitVelocity -= 0.005
-                else if (limitVelocity < -0.005)                     limitVelocity += 0.005
-                else limitVelocity = 0;
+                if (limitVelocity > 0.005) {
+					limitVelocity -= 0.005;
+				}
+                else if (limitVelocity < -0.005) {
+                    limitVelocity += 0.005;
+				}
+                else {
+					limitVelocity = 0;
+				}
             }
         }
         else {
@@ -202,11 +214,11 @@ class TranslationalConstraint
             maxMotorImpulse = 0;
         }
         
-        var rdx : Float = d * ax;
-        var rdy : Float = d * ay;
-        var rdz : Float = d * az;
-        var w1 : Float = m1 / (m1 + m2);
-        var w2 : Float = 1 - w1;
+        var rdx:Float = d * ax;
+        var rdy:Float = d * ay;
+        var rdz:Float = d * az;
+        var w1:Float = m1 / (m1 + m2);
+        var w2:Float = 1 - w1;
         r1x = r1.x + rdx * w1;
         r1y = r1.y + rdy * w1;
         r1z = r1.z + rdz * w1;
@@ -240,9 +252,9 @@ class TranslationalConstraint
         invMotorDenom = 1 / motorDenom;
         
         if (enableSpring && limitState != 2) {
-            var omega : Float = 6.2831853 * frequency;
-            var k : Float = omega * omega * timeStep;
-            var dmp : Float = invTimeStep / (k + 2 * limitMotor.dampingRatio * omega);
+            var omega:Float = 6.2831853 * frequency;
+            var k:Float = omega * omega * timeStep;
+            var dmp:Float = invTimeStep / (k + 2 * limitMotor.dampingRatio * omega);
             cfm = motorDenom * dmp;
             limitVelocity *= k * dmp;
         }
@@ -253,7 +265,7 @@ class TranslationalConstraint
         
         invDenom = 1 / (motorDenom + cfm);
         
-        var totalImpulse : Float = limitImpulse + motorImpulse;
+        var totalImpulse:Float = limitImpulse + motorImpulse;
         l1.x += totalImpulse * l1x;
         l1.y += totalImpulse * l1y;
         l1.z += totalImpulse * l1z;
@@ -268,36 +280,46 @@ class TranslationalConstraint
         a2.z -= totalImpulse * a2z;
     }
     
-    public function solve() : Void{
-        var rvn : Float = 
+    inline public function solve() {
+        var rvn:Float = 
         ax * (l2.x - l1.x) + ay * (l2.y - l1.y) + az * (l2.z - l1.z) +
         t2x * a2.x - t1x * a1.x + t2y * a2.y - t1y * a1.y + t2z * a2.z - t1z * a1.z;
         
         // motor part
-        var newMotorImpulse : Float;
+        var newMotorImpulse:Float;
         if (enableMotor) {
             newMotorImpulse = (rvn - motorSpeed) * invMotorDenom;
-            var oldMotorImpulse : Float = motorImpulse;
+            var oldMotorImpulse:Float = motorImpulse;
             motorImpulse += newMotorImpulse;
-            if (motorImpulse > maxMotorImpulse)                 motorImpulse = maxMotorImpulse
-            else if (motorImpulse < -maxMotorImpulse)                 motorImpulse = -maxMotorImpulse;
+            if (motorImpulse > maxMotorImpulse) {
+                motorImpulse = maxMotorImpulse;
+			}
+            else if (motorImpulse < -maxMotorImpulse) {
+                motorImpulse = -maxMotorImpulse;
+			}
             newMotorImpulse = motorImpulse - oldMotorImpulse;
             rvn -= newMotorImpulse * motorDenom;
         }
-        else newMotorImpulse = 0;
+        else {
+			newMotorImpulse = 0;
+		}
         
         // limit part
-        var newLimitImpulse : Float;
+        var newLimitImpulse:Float;
         if (limitState != 2) {
             newLimitImpulse = (rvn - limitVelocity - limitImpulse * cfm) * invDenom;
-            var oldLimitImpulse : Float = limitImpulse;
+            var oldLimitImpulse:Float = limitImpulse;
             limitImpulse += newLimitImpulse;
-            if (limitImpulse * limitState < 0)                 limitImpulse = 0;
+            if (limitImpulse * limitState < 0) {
+                limitImpulse = 0;
+			}
             newLimitImpulse = limitImpulse - oldLimitImpulse;
         }
-        else newLimitImpulse = 0;
+        else {
+			newLimitImpulse = 0;
+		}
         
-        var totalImpulse : Float = newLimitImpulse + newMotorImpulse;
+        var totalImpulse:Float = newLimitImpulse + newMotorImpulse;
         l1.x += totalImpulse * l1x;
         l1.y += totalImpulse * l1y;
         l1.z += totalImpulse * l1z;
@@ -311,5 +333,5 @@ class TranslationalConstraint
         a2.y -= totalImpulse * a2y;
         a2.z -= totalImpulse * a2z;
     }
+	
 }
-

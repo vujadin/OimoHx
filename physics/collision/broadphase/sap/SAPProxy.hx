@@ -22,31 +22,30 @@ package oimohx.physics.collision.broadphase.sap;
 import oimohx.physics.collision.broadphase.Proxy;
 import oimohx.physics.collision.shape.Shape;
 import oimohx.physics.dynamics.RigidBody;
+
 /**
-	 * A proxy for sweep and prune broad-phase.
-	 * @author saharan
+ * A proxy for sweep and prune broad-phase.
+ * @author saharan
+ */
+class SAPProxy extends Proxy {
+    /**
+	 * The minimum elements on each axis.
 	 */
-class SAPProxy extends Proxy
-{
-    /**
-		 * The minimum elements on each axis.
-		 */
-    public var min : Array<SAPElement> = new Array<SAPElement>();
+    public var min:Array<SAPElement> = [];
     
     /**
-		 * The maximum elements on each axis.
-		 */
-    public var max : Array<SAPElement> = new Array<SAPElement>();
+	 * The maximum elements on each axis.
+	 */
+    public var max:Array<SAPElement> = [];
     
     /**
-		 * Type of the axis to which the proxy belongs to. [0:none, 1:dynamic, 2:static]
-		 */
-    public var belongsTo : Int;
+	 * Type of the axis to which the proxy belongs to. [0:none, 1:dynamic, 2:static]
+	 */
+    public var belongsTo:Int;    
+    private var sap:SAPBroadPhase;
+	
     
-    private var sap : SAPBroadPhase;
-    
-    public function new(sap : SAPBroadPhase, shape : Shape)
-    {
+    public function new(sap:SAPBroadPhase, shape:Shape) {
         super(shape);
         this.sap = sap;
         min[0] = new SAPElement(this, false);
@@ -70,31 +69,31 @@ class SAPProxy extends Proxy
         min[2].max1 = max[0];
         min[2].min2 = min[1];
         min[2].max2 = max[1];
+		
+		this.update = _update;
     }
+	
+	inline function _update() {
+		min[0].value = aabb.minX;
+		max[0].value = aabb.maxX;
+		min[1].value = aabb.minY;
+		max[1].value = aabb.maxY;
+		min[2].value = aabb.minZ;
+		max[2].value = aabb.maxZ;
+		if (belongsTo == 1 && !isDynamic() || belongsTo == 2 && isDynamic()) {
+			sap.removeProxy(this);
+			sap.addProxy(this);
+		}
+	}
     
     /**
-		 * Returns whether the proxy is dynamic or not.
-		 * @return
-		 */
-    public function isDynamic() : Bool{
-        var body : RigidBody = shape.parent;
+	 * Returns whether the proxy is dynamic or not.
+	 * @return
+	 */
+    public function isDynamic():Bool {
+        var body:RigidBody = shape.parent;
         return body.isDynamic && !body.sleeping;
     }
     
-    /**
-		 * @inheritDoc
-		 */
-    override public function update() : Void{
-        min[0].value = aabb.minX;
-        max[0].value = aabb.maxX;
-        min[1].value = aabb.minY;
-        max[1].value = aabb.maxY;
-        min[2].value = aabb.minZ;
-        max[2].value = aabb.maxZ;
-        if (belongsTo == 1 && !isDynamic() || belongsTo == 2 && isDynamic()) {
-            sap.removeProxy(this);
-            sap.addProxy(this);
-        }
-    }
 }
 
