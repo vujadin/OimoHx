@@ -46,6 +46,7 @@ class DBVTBroadPhase extends BroadPhase {
         stack = [];
         maxLeaves = 256;
         leaves = [];
+		collectPairs = _collectPairs;
     }
     
     override public function createProxy(shape:Shape):Proxy {
@@ -78,7 +79,7 @@ class DBVTBroadPhase extends BroadPhase {
         }
     }
     
-    override private function collectPairs() {
+    inline private function _collectPairs() {
         if (numLeaves < 2) {
             return;
 		}

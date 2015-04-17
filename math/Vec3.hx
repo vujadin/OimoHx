@@ -81,6 +81,13 @@ class Vec3 {
         z += v.z;
         return this;
     }
+	
+	inline public function addTime(v:Vec3, t:Float):Vec3 {
+        this.x += v.x * t;
+        this.y += v.y * t;
+        this.z += v.z * t;
+        return this;
+    }
     
     /**
 	 * this = v1 - v2
@@ -153,6 +160,14 @@ class Vec3 {
         this.z = v1.x * v2.y - v1.y * v2.x;
         return this;
     }
+	
+	inline public function mul(o:Vec3, v:Vec3, m:Mat33):Vec3 {
+        var te = m.elements;
+        this.x = o.x + v.x * te[0] + v.y * te[1] + v.z * te[2];
+        this.y = o.y + v.x * te[3] + v.y * te[4] + v.z * te[5];
+        this.z = o.z + v.x * te[6] + v.y * te[7] + v.z * te[8];
+        return this;
+    }
     
     /**
 	 * this = m * v
@@ -193,6 +208,24 @@ class Vec3 {
         y = -v.y;
         z = -v.z;
         return this;
+    }
+	
+	inline public function testZero():Bool {
+        if (this.x != 0 || this.y != 0 || this.z != 0) {
+			return true;
+		}
+        else {
+			return false;
+		}
+    }
+	
+    inline public function testDiff(v:Vec3):Bool {
+        if (this.x != v.x || this.y != v.y || this.z != v.z) {
+			return true;
+		}
+        else {
+			return false;
+		}
     }
     
     /**

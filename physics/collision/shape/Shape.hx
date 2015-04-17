@@ -163,17 +163,10 @@ class Shape {
 	 * @param	out
 	 */
 	public var calculateMassInfo:MassInfo->Void;
-    /*public function calculateMassInfo(out:MassInfo) {
-        throw("Shape: Inheritance error.");
-    }*/
     
     /**
 	 * Update the proxy of the shape.
 	 */
 	public var updateProxy:Void->Void;
-    /*public function updateProxy() {
-        throw("Inheritance error.");
-    }*/
 	
 }
-

@@ -38,6 +38,7 @@ class BruteForceBroadPhase extends BroadPhase {
         super();
         maxProxies = 256;
         proxies = [];
+		collectPairs = _collectPairs;
     }
     
     /**
@@ -75,16 +76,24 @@ class BruteForceBroadPhase extends BroadPhase {
         }
     }
     
-    override private function collectPairs() {
+    inline private function _collectPairs() {
         numPairChecks = numProxies * (numProxies - 1) >> 1;
+		
+		var p1:Proxy = null;
+		var b1:AABB = null;
+		var s1:Shape = null;
+		var p2:Proxy = null;
+		var b2:AABB = null;
+		var s2:Shape = null;
+		
         for (i in 0...numProxies) {
-            var p1:Proxy = proxies[i];
-            var b1:AABB = p1.aabb;
-            var s1:Shape = p1.shape;
+            p1 = proxies[i];
+            b1 = p1.aabb;
+            s1 = p1.shape;			
             for (j in i + 1...numProxies){
-                var p2:Proxy = proxies[j];
-                var b2:AABB = p2.aabb;
-                var s2:Shape = p2.shape;
+                p2 = proxies[j];
+                b2 = p2.aabb;
+                s2 = p2.shape;
                 if (
 					b1.maxX < b2.minX || b1.minX > b2.maxX ||
 					b1.maxY < b2.minY || b1.minY > b2.maxY ||

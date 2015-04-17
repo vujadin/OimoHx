@@ -279,4 +279,3 @@ class BoxShape extends Shape {
 	}
 	
 }
-

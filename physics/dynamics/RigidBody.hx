@@ -18,6 +18,7 @@
  */
 package oimohx.physics.dynamics;
 
+import oimohx.math.Mat44;
 import oimohx.physics.dynamics.World;
 
 import oimohx.math.Mat33;
@@ -115,6 +116,15 @@ class RigidBody {
 	 * 回転行列は、ステップ毎にクォータニオンから再計算されます。
 	 */
     public var rotation:Mat33;
+	
+	public var matrix:Mat44;
+
+	public var newRotation:Vec3;
+	public var newPosition:Vec3;
+	public var newOrientation:Quat;
+	
+	public var controlPos:Bool = false;
+	public var controlRot:Bool = false;
     
     /**
 	 * 質量です。
@@ -260,6 +270,11 @@ class RigidBody {
         inverseLocalInertia = new Mat33();
         allowSleep = true;
         sleepTime = 0;
+		
+		newOrientation = new Quat();
+		newRotation = new Vec3(0, 0, 0);
+		newPosition = new Vec3(0, 0, 0);
+		matrix = new Mat44();
     }
     
     /**
@@ -512,6 +527,24 @@ class RigidBody {
                 orientation.y = oy * s;
                 orientation.z = oz * s;
 				
+				/*if(this.controlPos){
+                    this.angularVelocity.init();
+                    this.linearVelocity.init();
+                    this.linearVelocity.x = (this.newPosition.x - this.position.x) / timeStep;
+                    this.linearVelocity.y = (this.newPosition.y - this.position.y) / timeStep;
+                    this.linearVelocity.z = (this.newPosition.z - this.position.z) / timeStep;
+                    this.controlPos = false;
+                }
+                if(this.controlRot){
+                    this.angularVelocity.init();
+                    this.orientation.copy(this.newOrientation);
+                    
+                    this.controlRot = false;
+                }
+
+                this.position.addTime(this.linearVelocity, timeStep);
+                this.orientation.addTime(this.angularVelocity, timeStep);*/
+				
             default:
                 //throw new Error("Invalid type.");
         }
@@ -519,7 +552,26 @@ class RigidBody {
     }
     
     inline private function rotateInertia(rot:Mat33, inertia:Mat33, out:Mat33) {
-        var r00:Float = rot.e00;
+		var e00:Float = rot.e00 * inertia.e00 + rot.e01 * inertia.e10 + rot.e02 * inertia.e20;
+        var e01:Float = rot.e00 * inertia.e01 + rot.e01 * inertia.e11 + rot.e02 * inertia.e21;
+        var e02:Float = rot.e00 * inertia.e02 + rot.e01 * inertia.e12 + rot.e02 * inertia.e22;
+        var e10:Float = rot.e10 * inertia.e00 + rot.e11 * inertia.e10 + rot.e12 * inertia.e20;
+        var e11:Float = rot.e10 * inertia.e01 + rot.e11 * inertia.e11 + rot.e12 * inertia.e21;
+        var e12:Float = rot.e10 * inertia.e02 + rot.e11 * inertia.e12 + rot.e12 * inertia.e22;
+        var e20:Float = rot.e20 * inertia.e00 + rot.e21 * inertia.e10 + rot.e22 * inertia.e20;
+        var e21:Float = rot.e20 * inertia.e01 + rot.e21 * inertia.e11 + rot.e22 * inertia.e21;
+        var e22:Float = rot.e20 * inertia.e02 + rot.e21 * inertia.e12 + rot.e22 * inertia.e22;
+        out.e00 = e00 * rot.e00 + e01 * rot.e01 + e02 * rot.e02;
+        out.e01 = e00 * rot.e10 + e01 * rot.e11 + e02 * rot.e12;
+        out.e02 = e00 * rot.e20 + e01 * rot.e21 + e02 * rot.e22;
+        out.e10 = e10 * rot.e00 + e11 * rot.e01 + e12 * rot.e02;
+        out.e11 = e10 * rot.e10 + e11 * rot.e11 + e12 * rot.e12;
+        out.e12 = e10 * rot.e20 + e11 * rot.e21 + e12 * rot.e22;
+        out.e20 = e20 * rot.e00 + e21 * rot.e01 + e22 * rot.e02;
+        out.e21 = e20 * rot.e10 + e21 * rot.e11 + e22 * rot.e12;
+        out.e22 = e20 * rot.e20 + e21 * rot.e21 + e22 * rot.e22;
+		
+        /*var r00:Float = rot.e00;
         var r01:Float = rot.e01;
         var r02:Float = rot.e02;
         var r10:Float = rot.e10;
@@ -554,11 +606,43 @@ class RigidBody {
         out.e12 = e10 * r20 + e11 * r21 + e12 * r22;
         out.e20 = e20 * r00 + e21 * r01 + e22 * r02;
         out.e21 = e20 * r10 + e21 * r11 + e22 * r12;
-        out.e22 = e20 * r20 + e21 * r21 + e22 * r22;
+        out.e22 = e20 * r20 + e21 * r21 + e22 * r22;*/
+		
+		/*var tm1 = rot.elements;
+        var tm2 = inertia.elements;
+
+        var a0 = tm1[0], a3 = tm1[3], a6 = tm1[6];
+        var a1 = tm1[1], a4 = tm1[4], a7 = tm1[7];
+        var a2 = tm1[2], a5 = tm1[5], a8 = tm1[8];
+
+        var b0 = tm2[0], b3 = tm2[3], b6 = tm2[6];
+        var b1 = tm2[1], b4 = tm2[4], b7 = tm2[7];
+        var b2 = tm2[2], b5 = tm2[5], b8 = tm2[8];
+        
+        var e00 = a0*b0 + a1*b3 + a2*b6;
+        var e01 = a0*b1 + a1*b4 + a2*b7;
+        var e02 = a0*b2 + a1*b5 + a2*b8;
+        var e10 = a3*b0 + a4*b3 + a5*b6;
+        var e11 = a3*b1 + a4*b4 + a5*b7;
+        var e12 = a3*b2 + a4*b5 + a5*b8;
+        var e20 = a6*b0 + a7*b3 + a8*b6;
+        var e21 = a6*b1 + a7*b4 + a8*b7;
+        var e22 = a6*b2 + a7*b5 + a8*b8;
+
+        var oe = out.elements;
+        out.e00 = oe[0] = e00*a0 + e01*a1 + e02*a2;
+        out.e01 = oe[1] = e00*a3 + e01*a4 + e02*a5;
+        out.e02 = oe[2] = e00*a6 + e01*a7 + e02*a8;
+        out.e10 = oe[3] = e10*a0 + e11*a1 + e12*a2;
+        out.e11 = oe[4] = e10*a3 + e11*a4 + e12*a5;
+        out.e12 = oe[5] = e10*a6 + e11*a7 + e12*a8;
+        out.e20 = oe[6] = e20*a0 + e21*a1 + e22*a2;
+        out.e21 = oe[7] = e20*a3 + e21*a4 + e22*a5;
+        out.e22 = oe[8] = e20*a6 + e21*a7 + e22*a8;*/
     }
     
     inline public function syncShapes() {
-        var s:Float = orientation.s;
+        /*var s:Float = orientation.s;
         var x:Float = orientation.x;
         var y:Float = orientation.y;
         var z:Float = orientation.z;
@@ -607,6 +691,43 @@ class RigidBody {
             rot.mul(relRot, rotation);
             shape.updateProxy();
             shape = shape.next;
+        }*/
+		
+		var s = this.orientation.s;
+        var x = this.orientation.x;
+        var y = this.orientation.y;
+        var z = this.orientation.z;
+        var x2 = 2 * x;
+        var y2 = 2 * y;
+        var z2 = 2 * z;
+        var xx = x * x2;
+        var yy = y * y2;
+        var zz = z * z2;
+        var xy = x * y2;
+        var yz = y * z2;
+        var xz = x * z2;
+        var sx = s * x2;
+        var sy = s * y2;
+        var sz = s * z2;
+		
+        var tr = this.rotation.elements;
+        this.rotation.e00 = tr[0] = 1 - yy - zz;
+        this.rotation.e01 = tr[1] = xy - sz;
+        this.rotation.e02 = tr[2] = xz + sy;
+        this.rotation.e10 = tr[3] = xy + sz;
+        this.rotation.e11 = tr[4] = 1 - xx - zz;
+        this.rotation.e12 = tr[5] = yz - sx;
+        this.rotation.e20 = tr[6] = xz - sy;
+        this.rotation.e21 = tr[7] = yz + sx;
+        this.rotation.e22 = tr[8] = 1 - xx - yy;
+		
+        this.rotateInertia(this.rotation,this.inverseLocalInertia,this.inverseInertia);
+        var shape:Shape = shapes;
+        while (shape != null) {
+            shape.position.mul(this.position, shape.relativePosition, this.rotation);
+            shape.rotation.mul(shape.relativeRotation, this.rotation);
+            shape.updateProxy();
+			shape = shape.next;
         }
     }
     
@@ -616,9 +737,7 @@ class RigidBody {
         linearVelocity.z += force.z * inverseMass;
         var rel:Vec3 = new Vec3();
         rel.sub(position, this.position).cross(rel, force).mulMat(inverseInertia, rel);
-        angularVelocity.x += rel.x;
-        angularVelocity.y += rel.y;
-        angularVelocity.z += rel.z;
+		angularVelocity.addEqual(rel);
     }
 
     inline public function setImpulse(position:Vec3, force:Vec3) {
@@ -632,5 +751,111 @@ class RigidBody {
         angularVelocity.z = rel.z;
     }
 	
-}
+	//---------------------------------------------
+    //
+    // FOR BabylonHx
+    //
+    //---------------------------------------------
 
+    inline public function rotationVectToQuad(rot:Vec3):Quat {
+        var r = com.babylonhx.physics.plugins.Body.EulerToAxis(rot.x * World.TO_RAD, rot.y * World.TO_RAD, rot.z * World.TO_RAD);
+        return this.rotationAxisToQuad(r[0], r[1], r[2], r[3]);
+    }
+
+    inline public function rotationAxisToQuad(rad:Float, ax:Float, ay:Float, az:Float):Quat { // in radian
+        var len = ax * ax + ay * ay + az * az; 
+        if (len > 0) {	
+            len = 1 / Math.sqrt(len);
+            ax *= len;
+            ay *= len;
+            az *= len;
+        }
+        var sin = Math.sin(rad * 0.5);
+        var cos = Math.cos(rad * 0.5);
+        return new Quat(cos, sin * ax, sin * ay, sin * az);
+    }
+
+    //---------------------------------------------
+    // SET DYNAMIQUE POSITION AND ROTATION
+    //---------------------------------------------
+
+    inline public function setPosition(pos:Vec3) {
+        this.newPosition.init(pos.x * World.INV_SCALE, pos.y * World.INV_SCALE, pos.z * World.INV_SCALE);
+        this.controlPos = true;
+    }
+
+    inline public function setQuaternion(q:Quat) { 
+        this.newOrientation.init(q.s, q.x, q.y, q.z);
+        this.controlRot = true;
+    }
+
+    inline public function setRotation(rot:Vec3) { 
+        this.newOrientation = this.rotationVectToQuad(rot);
+        this.controlRot = true;
+    }
+
+    //---------------------------------------------
+    // RESET DYNAMIQUE POSITION AND ROTATION
+    //---------------------------------------------
+
+    inline public function resetPosition(x:Float, y:Float, z:Float) {	
+        this.linearVelocity.init();
+        this.angularVelocity.init();
+        this.position.init(x * World.INV_SCALE, y * World.INV_SCALE, z * World.INV_SCALE);
+        this.awake();
+    }
+	
+    inline public function resetQuaternion(q:Quat) {
+        this.angularVelocity.init();
+        this.orientation = new Quat(q.s, q.x, q.y, q.z);
+        this.awake();
+    }
+	
+    inline public function resetRotation(x:Float, y:Float, z:Float) {	
+        this.angularVelocity.init();
+        this.orientation = this.rotationVectToQuad(new Vec3(x, y, z));
+        this.awake();
+    }
+
+    //---------------------------------------------
+    // GET POSITION AND ROTATION
+    //---------------------------------------------
+
+    inline public function getPosition():Vec3 {
+        return new Vec3().scale(this.position, World.WORLD_SCALE);
+    }
+	
+    /*inline public function getRotation():Euler {
+        return new Euler().setFromRotationMatrix(this.rotation);
+    }
+	
+    inline public function getQuaternion():Quat {
+        return new Quat().setFromRotationMatrix(this.rotation);
+    }*/
+    inline public function getMatrix():Array<Float> {
+        var m = this.matrix.elements;
+        var r:Array<Float> = [];
+		var p:Vec3 = null;
+        if(!this.sleeping){
+            // rotation matrix
+            r = this.rotation.elements;
+            m[0] = r[0]; m[1] = r[3]; m[2] = r[6];  m[3] = 0;
+            m[4] = r[1]; m[5] = r[4]; m[6] = r[7];  m[7] = 0;
+            m[8] = r[2]; m[9] = r[5]; m[10] = r[8]; m[11] = 0;
+			
+            // position matrix
+            p = this.position;
+            m[12] = p.x * World.WORLD_SCALE;
+            m[13] = p.y * World.WORLD_SCALE;
+            m[14] = p.z * World.WORLD_SCALE;
+			
+            // sleep or not ?
+            m[15] = 0;
+        } else {
+            m[15] = 1;
+        }
+		
+        return m;
+    }
+	
+}

@@ -76,6 +76,37 @@ class Quat {
         z = q1.z + q2.z;
         return this;
     }
+	
+	inline public function addTime(v:Vec3, t:Float):Quat {
+        var x = v.x;
+        var y = v.y;
+        var z = v.z;
+		
+        var qs = this.s;
+        var qx = this.x;
+        var qy = this.y;
+        var qz = this.z;
+		
+        t *= 0.5;
+        var ns = ( -x * qx - y * qy - z * qz) * t;
+        var nx = ( x * qs + y * qz - z * qy) * t;
+        var ny = ( -x * qz + y * qs + z * qx) * t;
+        var nz = ( x * qy - y * qx + z * qs) * t;
+		
+        qs += ns;
+        qx += nx;
+        qy += ny;
+        qz += nz;
+		
+        var s = 1 / Math.sqrt(qs * qs + qx * qx + qy * qy + qz * qz);
+		
+        this.s = qs * s;
+        this.x = qx * s;
+        this.y = qy * s;
+        this.z = qz * s;
+		
+        return this;
+    }
     
     /**
 	 * this = q1 - q2
@@ -127,32 +158,22 @@ class Quat {
 	 * @return
 	 */
     public function arc(v1:Vec3, v2:Vec3):Quat {
-        var x1:Float = v1.x;
-        var y1:Float = v1.y;
-        var z1:Float = v1.z;
-        var x2:Float = v2.x;
-        var y2:Float = v2.y;
-        var z2:Float = v2.z;
-        var d:Float = x1 * x2 + y1 * y2 + z1 * z2;  // cos(theta)  
+        var d:Float = v1.x * v2.x + v1.y * v2.y + v1.z * v2.z;  // cos(theta)  
         if (d == -1) {  // 180 rotation, set a vector perpendicular to v1  
-            x2 = y1 * x1 - z1 * z1;
-            y2 = -z1 * y1 - x1 * x1;
-            z2 = x1 * z1 + y1 * y1;
-            d = 1 / Math.sqrt(x2 * x2 + y2 * y2 + z2 * z2);
+            v2.x = v1.y * v1.x - v1.z * v1.z;
+            v2.y = -v1.z * v1.y - v1.x * v1.x;
+            v2.z = v1.x * v1.z + v1.y * v1.y;
+            d = 1 / Math.sqrt(v2.x * v2.x + v2.y * v2.y + v2.z * v2.z);
             s = 0;
-            x = x2 * d;
-            y = y2 * d;
-            z = z2 * d;
+            x = v2.x * d;
+            y = v2.y * d;
+            z = v2.z * d;
         } 
 		else {
-			var cx:Float = y1 * z2 - z1 * y2;
-			var cy:Float = z1 * x2 - x1 * z2;
-			var cz:Float = x1 * y2 - y1 * x2;
-			s = Math.sqrt((1 + d) * 0.5);  // cos(theta / 2)  
-			d = 0.5 / s;  // sin(theta / 2) / sin(theta)  
-			x = cx * d;
-			y = cy * d;
-			z = cz * d;
+			d = 0.5 / Math.sqrt((1 + d) * 0.5);  // sin(theta / 2) / sin(theta)  
+			x = (v1.y * v2.z - v1.z * v2.y) * d;
+			y = (v1.z * v2.x - v1.x * v2.z) * d;
+			z = (v1.x * v2.y - v1.y * v2.x) * d;
 		}
         return this;
     }
@@ -207,6 +228,15 @@ class Quat {
         z = q.z;
         return this;
     }
+	
+	inline public function testDiff(q:Quat):Bool {
+        if (this.s != q.s || this.x != q.x || this.y != q.y || this.z != q.z) {
+			return true;
+		}
+        else {
+			return false;
+		}
+    }
     
     /**
 	 * Get the clone of the quaternion.
@@ -225,4 +255,3 @@ class Quat {
     }
 	
 }
-

@@ -36,7 +36,23 @@ class Mat33 {
     public var e20:Float;
     public var e21:Float;
     public var e22:Float;
-    
+	
+	private var _elements:Array<Float> = [];
+	public var elements(get, never):Array<Float>;
+	private function get_elements():Array<Float> {
+		_elements[0] = e00;
+        _elements[1] = e01;
+        _elements[2] = e02;
+        _elements[3] = e10;
+        _elements[4] = e11;
+        _elements[5] = e12;
+        _elements[6] = e20;
+        _elements[7] = e21;
+        _elements[8] = e22;
+		
+		return _elements;
+	}
+	    
     /**
 	 * Constructor.
 	 * If the parameters are empty, the matrix will be set to the itentity matrix.
@@ -238,54 +254,27 @@ class Mat33 {
 	 * @return
 	 */
     inline public function mulScale(m:Mat33, sx:Float, sy:Float, sz:Float, prepend:Bool = false):Mat33 {
-        var e00:Float;
-        var e01:Float;
-        var e02:Float;
-        var e10:Float;
-        var e11:Float;
-        var e12:Float;
-        var e20:Float;
-        var e21:Float;
-        var e22:Float;
         if (prepend) {
-            e00 = sx * m.e00;
-            e01 = sx * m.e01;
-            e02 = sx * m.e02;
-            e10 = sy * m.e10;
-            e11 = sy * m.e11;
-            e12 = sy * m.e12;
-            e20 = sz * m.e20;
-            e21 = sz * m.e21;
-            e22 = sz * m.e22;
-            this.e00 = e00;
-            this.e01 = e01;
-            this.e02 = e02;
-            this.e10 = e10;
-            this.e11 = e11;
-            this.e12 = e12;
-            this.e20 = e20;
-            this.e21 = e21;
-            this.e22 = e22;
+            this.e00 = sx * m.e00;
+            this.e01 = sx * m.e01;
+            this.e02 = sx * m.e02;
+            this.e10 = sy * m.e10;
+            this.e11 = sy * m.e11;
+            this.e12 = sy * m.e12;
+            this.e20 = sz * m.e20;
+            this.e21 = sz * m.e21;
+            this.e22 = sz * m.e22;
         }
         else {
-            e00 = m.e00 * sx;
-            e01 = m.e01 * sy;
-            e02 = m.e02 * sz;
-            e10 = m.e10 * sx;
-            e11 = m.e11 * sy;
-            e12 = m.e12 * sz;
-            e20 = m.e20 * sx;
-            e21 = m.e21 * sy;
-            e22 = m.e22 * sz;
-            this.e00 = e00;
-            this.e01 = e01;
-            this.e02 = e02;
-            this.e10 = e10;
-            this.e11 = e11;
-            this.e12 = e12;
-            this.e20 = e20;
-            this.e21 = e21;
-            this.e22 = e22;
+            this.e00 = m.e00 * sx;
+            this.e01 = m.e01 * sy;
+            this.e02 = m.e02 * sz;
+            this.e10 = m.e10 * sx;
+            this.e11 = m.e11 * sy;
+            this.e12 = m.e12 * sz;
+            this.e20 = m.e20 * sx;
+            this.e21 = m.e21 * sy;
+            this.e22 = m.e22 * sz;
         }
         return this;
     }
@@ -315,54 +304,28 @@ class Mat33 {
         var r20:Float = az * ax * c1 - ay * s;
         var r21:Float = az * ay * c1 + ax * s;
         var r22:Float = az * az * c1 + c;
-        var e00:Float;
-        var e01:Float;
-        var e02:Float;
-        var e10:Float;
-        var e11:Float;
-        var e12:Float;
-        var e20:Float;
-        var e21:Float;
-        var e22:Float;
+		
         if (prepend) {
-            e00 = r00 * m.e00 + r01 * m.e10 + r02 * m.e20;
-            e01 = r00 * m.e01 + r01 * m.e11 + r02 * m.e21;
-            e02 = r00 * m.e02 + r01 * m.e12 + r02 * m.e22;
-            e10 = r10 * m.e00 + r11 * m.e10 + r12 * m.e20;
-            e11 = r10 * m.e01 + r11 * m.e11 + r12 * m.e21;
-            e12 = r10 * m.e02 + r11 * m.e12 + r12 * m.e22;
-            e20 = r20 * m.e00 + r21 * m.e10 + r22 * m.e20;
-            e21 = r20 * m.e01 + r21 * m.e11 + r22 * m.e21;
-            e22 = r20 * m.e02 + r21 * m.e12 + r22 * m.e22;
-            this.e00 = e00;
-            this.e01 = e01;
-            this.e02 = e02;
-            this.e10 = e10;
-            this.e11 = e11;
-            this.e12 = e12;
-            this.e20 = e20;
-            this.e21 = e21;
-            this.e22 = e22;
+            this.e00 = r00 * m.e00 + r01 * m.e10 + r02 * m.e20;
+            this.e01 = r00 * m.e01 + r01 * m.e11 + r02 * m.e21;
+            this.e02 = r00 * m.e02 + r01 * m.e12 + r02 * m.e22;
+            this.e10 = r10 * m.e00 + r11 * m.e10 + r12 * m.e20;
+            this.e11 = r10 * m.e01 + r11 * m.e11 + r12 * m.e21;
+            this.e12 = r10 * m.e02 + r11 * m.e12 + r12 * m.e22;
+            this.e20 = r20 * m.e00 + r21 * m.e10 + r22 * m.e20;
+            this.e21 = r20 * m.e01 + r21 * m.e11 + r22 * m.e21;
+            this.e22 = r20 * m.e02 + r21 * m.e12 + r22 * m.e22;
         }
         else {
-            e00 = m.e00 * r00 + m.e01 * r10 + m.e02 * r20;
-            e01 = m.e00 * r01 + m.e01 * r11 + m.e02 * r21;
-            e02 = m.e00 * r02 + m.e01 * r12 + m.e02 * r22;
-            e10 = m.e10 * r00 + m.e11 * r10 + m.e12 * r20;
-            e11 = m.e10 * r01 + m.e11 * r11 + m.e12 * r21;
-            e12 = m.e10 * r02 + m.e11 * r12 + m.e12 * r22;
-            e20 = m.e20 * r00 + m.e21 * r10 + m.e22 * r20;
-            e21 = m.e20 * r01 + m.e21 * r11 + m.e22 * r21;
-            e22 = m.e20 * r02 + m.e21 * r12 + m.e22 * r22;
-            this.e00 = e00;
-            this.e01 = e01;
-            this.e02 = e02;
-            this.e10 = e10;
-            this.e11 = e11;
-            this.e12 = e12;
-            this.e20 = e20;
-            this.e21 = e21;
-            this.e22 = e22;
+            this.e00 = m.e00 * r00 + m.e01 * r10 + m.e02 * r20;
+            this.e01 = m.e00 * r01 + m.e01 * r11 + m.e02 * r21;
+            this.e02 = m.e00 * r02 + m.e01 * r12 + m.e02 * r22;
+            this.e10 = m.e10 * r00 + m.e11 * r10 + m.e12 * r20;
+            this.e11 = m.e10 * r01 + m.e11 * r11 + m.e12 * r21;
+            this.e12 = m.e10 * r02 + m.e11 * r12 + m.e12 * r22;
+            this.e20 = m.e20 * r00 + m.e21 * r10 + m.e22 * r20;
+            this.e21 = m.e20 * r01 + m.e21 * r11 + m.e22 * r21;
+            this.e22 = m.e20 * r02 + m.e21 * r12 + m.e22 * r22;
         }
         return this;
     }
@@ -431,25 +394,19 @@ class Mat33 {
         m.e00 * (m.e11 * m.e22 - m.e21 * m.e12) +
         m.e10 * (m.e21 * m.e02 - m.e01 * m.e22) +
         m.e20 * (m.e01 * m.e12 - m.e11 * m.e02);
-        if (det != 0)             det = 1 / det;
-        var t00:Float = m.e11 * m.e22 - m.e12 * m.e21;
-        var t01:Float = m.e02 * m.e21 - m.e01 * m.e22;
-        var t02:Float = m.e01 * m.e12 - m.e02 * m.e11;
-        var t10:Float = m.e12 * m.e20 - m.e10 * m.e22;
-        var t11:Float = m.e00 * m.e22 - m.e02 * m.e20;
-        var t12:Float = m.e02 * m.e10 - m.e00 * m.e12;
-        var t20:Float = m.e10 * m.e21 - m.e11 * m.e20;
-        var t21:Float = m.e01 * m.e20 - m.e00 * m.e21;
-        var t22:Float = m.e00 * m.e11 - m.e01 * m.e10;
-        e00 = det * t00;
-        e01 = det * t01;
-        e02 = det * t02;
-        e10 = det * t10;
-        e11 = det * t11;
-        e12 = det * t12;
-        e20 = det * t20;
-        e21 = det * t21;
-        e22 = det * t22;
+        if (det != 0) {
+            det = 1 / det;
+		}
+        
+        e00 = det * (m.e11 * m.e22 - m.e12 * m.e21);
+        e01 = det * (m.e02 * m.e21 - m.e01 * m.e22);
+        e02 = det * (m.e01 * m.e12 - m.e02 * m.e11);
+        e10 = det * (m.e12 * m.e20 - m.e10 * m.e22);
+        e11 = det * (m.e00 * m.e22 - m.e02 * m.e20);
+        e12 = det * (m.e02 * m.e10 - m.e00 * m.e12);
+        e20 = det * (m.e10 * m.e21 - m.e11 * m.e20);
+        e21 = det * (m.e01 * m.e20 - m.e00 * m.e21);
+        e22 = det * (m.e00 * m.e11 - m.e01 * m.e10);
         return this;
     }
     

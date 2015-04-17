@@ -53,6 +53,8 @@ class BroadPhase {
 	 * The number of pairs.
 	 */
     public var numPairs:Int = 0;
+	
+	public var collectPairs:Void->Void;
     
     /**
 	 * The number of pair checks.
@@ -103,6 +105,7 @@ class BroadPhase {
     public function isAvailablePair(s1:Shape, s2:Shape):Bool {
         var b1:RigidBody = s1.parent;
         var b2:RigidBody = s2.parent;
+		
         if (
 			b1 == b2 || // same parents
 			(!b1.isDynamic && !b2.isDynamic) || // static or kinematic objects
@@ -111,6 +114,7 @@ class BroadPhase {
 		) {
 			return false;
 		}
+		
         var js:JointLink;
         if (b1.numJoints < b2.numJoints) {
 			js = b1.jointLink;
@@ -118,8 +122,10 @@ class BroadPhase {
         else {
 			js = b2.jointLink;
 		}
+		
+		var joint:Joint = null;
         while (js != null) {
-            var joint:Joint = js.joint;
+            joint = js.joint;
 			if (
 				!joint.allowCollision &&
 				(joint.body1 == b1 && joint.body2 == b2 ||
@@ -135,7 +141,7 @@ class BroadPhase {
     /**
 	 * Detect overlapping pairs.
 	 */
-    public function detectPairs() : Void{
+    inline public function detectPairs() {
         while (numPairs > 0) {
 			var pair:Pair = pairs[--numPairs];
 			pair.shape1 = null;
@@ -143,10 +149,6 @@ class BroadPhase {
 		}
 		numPairChecks = 0;
 		collectPairs();
-    }
-    
-    private function collectPairs() {
-        throw("Inheritance error.");
     }
     
     private function addPair(s1:Shape, s2:Shape) {

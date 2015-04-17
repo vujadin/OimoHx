@@ -50,6 +50,7 @@ class SAPBroadPhase extends BroadPhase {
         axesS[2] = new SAPAxis();
         index1 = 0;
         index2 = 1;
+		collectPairs = _collectPairs;
     }
     
     override public function createProxy(shape:Shape):Proxy {
@@ -105,7 +106,7 @@ class SAPBroadPhase extends BroadPhase {
         p.belongsTo = 0;
     }
     
-    override private function collectPairs() {
+    inline private function _collectPairs() {
         if (numElementsD == 0) {
             return;
 		}
@@ -138,46 +139,44 @@ class SAPBroadPhase extends BroadPhase {
         var activeS:SAPElement = null;
         var p:Int = 0;
         var q:Int = 0;
-        while (p < numElementsD) {
-            var e1:SAPElement;
-            var dyn:Bool;
+		var e1:SAPElement;
+		var dyn:Bool;
+        while (p < numElementsD) {            
             if (q == numElementsS) {
                 e1 = elementsD[p];
                 dyn = true;
                 p++;
             }
             else {
-                var d:SAPElement = elementsD[p];
-                var s:SAPElement = elementsS[q];
-                if (d.value < s.value) {
-                    e1 = d;
+                if (elementsD[p].value < elementsS[q].value) {
+                    e1 = elementsD[p];
                     dyn = true;
                     p++;
                 }
                 else {
-                    e1 = s;
+                    e1 = elementsS[q];
                     dyn = false;
                     q++;
                 }
             }
             if (!e1.max) {
-                var s1:Shape = e1.proxy.shape;
-                var min1:Float = e1.min1.value;
-                var max1:Float = e1.max1.value;
-                var min2:Float = e1.min2.value;
-                var max2:Float = e1.max2.value;
+                //var s1:Shape = e1.proxy.shape;
+                //var min1:Float = e1.min1.value;
+                //var max1:Float = e1.max1.value;
+                //var min2:Float = e1.min2.value;
+                //var max2:Float = e1.max2.value;
                 var e2:SAPElement = activeD;
                 while (e2 != null){  // test for dynamic  
                     var s2:Shape = e2.proxy.shape;
                     numPairChecks++;
                     if (
-                        min1 > e2.max1.value || max1 < e2.min1.value ||
-                        min2 > e2.max2.value || max2 < e2.min2.value ||
-                        !isAvailablePair(s1, s2)) {
+                        e1.min1.value > e2.max1.value || e1.max1.value < e2.min1.value ||
+                        e1.min2.value > e2.max2.value || e1.max2.value < e2.min2.value ||
+                        !isAvailablePair(e1.proxy.shape, s2)) {
 							e2 = e2.pair;
 							continue;
                     }
-                    addPair(s1, s2);
+                    addPair(e1.proxy.shape, s2);
                     e2 = e2.pair;
                 }
                 if (dyn) {
@@ -186,13 +185,13 @@ class SAPBroadPhase extends BroadPhase {
                         var s2 = e2.proxy.shape;
                         numPairChecks++;
                         if (
-                            min1 > e2.max1.value || max1 < e2.min1.value ||
-                            min2 > e2.max2.value || max2 < e2.min2.value ||
-                            !isAvailablePair(s1, s2)) {
+                            e1.min1.value > e2.max1.value || e1.max1.value < e2.min1.value ||
+                            e1.min2.value > e2.max2.value || e1.max2.value < e2.min2.value ||
+                            !isAvailablePair(e1.proxy.shape, s2)) {
                             	e2 = e2.pair;
 								continue;
                         }
-                        addPair(s1, s2);
+                        addPair(e1.proxy.shape, s2);
                         e2 = e2.pair;
                     }
                     e1.pair = activeD;

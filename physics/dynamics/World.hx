@@ -38,12 +38,18 @@ import oimohx.physics.constraint.joint.Joint;
 import oimohx.physics.constraint.joint.JointLink;
 import oimohx.physics.util.Performance;
 
+
 /**
  * 物理演算ワールドのクラスです。
  * 全ての物理演算オブジェクトはワールドに追加する必要があります。
  * @author saharan
  */
 class World {
+	
+	public static var TO_RAD:Float = Math.PI / 180;
+	public static inline var WORLD_SCALE:Float = 100;
+	public static inline var INV_SCALE:Float = 0.01;
+	
     /**
 	 * The rigid body list.
 	 */
@@ -130,7 +136,7 @@ class World {
     private var randX:Int;
     private var randA:Int;
     private var randB:Int;
-	
+		
     
     public function new(stepPerSecond:Float = 60, broadPhaseType:Int = BroadPhase.BROAD_PHASE_SWEEP_AND_PRUNE) {
         trace("OimoPhysics *** Copyright (c) 2012-2013 EL-EMENT saharan");
@@ -173,7 +179,7 @@ class World {
         maxIslandConstraints = 128;
         islandConstraints = new Array<Constraint>();
         enableRandomizer = true;
-    }
+	}
     
     /**
 	 * Reset the randomizer and remove all rigid bodies, shapes, joints and any object from the world.
@@ -340,15 +346,21 @@ class World {
     /**
 	 * ワールドの時間をタイムステップ秒だけ進めます。
 	 */
+	var body:RigidBody = null;
+	var lv:Vec3 = null;
+	var p:Vec3 = null;
+	var sp:Vec3 = null;
+	var o:Quat = null;
+	var so:Quat = null;
     inline public function step(dt:Float) {
         timeStep = dt;
-        var time1:Int = Math.round(haxe.Timer.stamp() * 1000);
-        var body:RigidBody = rigidBodies;
-		var lv:Vec3 = null;
-		var p:Vec3 = null;
-		var sp:Vec3 = null;
-		var o:Quat = null;
-		var so:Quat = null;
+        var time1 = haxe.Timer.stamp();
+        body = rigidBodies;
+		lv = null;
+		p = null;
+		sp = null;
+		o = null;
+		so = null;
         while (body != null) {	
             if (body.prestep != null) {
 				body.prestep();
@@ -372,14 +384,14 @@ class World {
 		
         updateContacts();
         solveIslands();
-        var time2:Int = Math.round(haxe.Timer.stamp() * 1000);
+        var time2 = haxe.Timer.stamp();
         performance.totalTime = time2 - time1;
-        performance.updatingTime = performance.totalTime - (performance.broadPhaseTime + performance.narrowPhaseTime + performance.solvingTime);
+        performance.updatingTime = performance.totalTime - (performance.broadPhaseTime + performance.narrowPhaseTime + performance.solvingTime);		
     }
     
     inline private function updateContacts() {
         // broad phase
-        var time1:Int = Math.round(haxe.Timer.stamp() * 1000);
+        var time1 = haxe.Timer.stamp() * 1000;
         broadPhase.detectPairs();
         var pairs:Array<Pair> = broadPhase.pairs;
         var numPairs:Int = broadPhase.numPairs;
@@ -405,9 +417,8 @@ class World {
             }
             var exists:Bool = false;
             while (link != null){
-                var contact:Contact = link.contact;
-                if (contact.shape1 == s1 && contact.shape2 == s2) {
-                    contact.persisting = true;
+                if (link.contact.shape1 == s1 && link.contact.shape2 == s2) {
+                    link.contact.persisting = true;
                     exists = true;  // contact already exists  
                     break;
                 }
@@ -418,16 +429,18 @@ class World {
             }
         }
         
-        var time2:Int = Math.round(haxe.Timer.stamp() * 1000);
+        var time2 = haxe.Timer.stamp() * 1000;
         performance.broadPhaseTime = time2 - time1;
         
         // update & narrow phase
         numContactPoints = 0;
         var contact = contacts;
+		var aabb1:AABB;
+		var aabb2:AABB;
         while (contact != null) {
             if (!contact.persisting) {
-                var aabb1:AABB = contact.shape1.aabb;
-                var aabb2:AABB = contact.shape2.aabb;
+                aabb1 = contact.shape1.aabb;
+                aabb2 = contact.shape2.aabb;
                 if (
                     aabb1.minX > aabb2.maxX || aabb1.maxX < aabb2.minX ||
                     aabb1.minY > aabb2.maxY || aabb1.maxY < aabb2.minY ||
@@ -439,9 +452,7 @@ class World {
                 }
             }
 			
-            var b1:RigidBody = contact.body1;
-            var b2:RigidBody = contact.body2;
-            if (b1.isDynamic && !b1.sleeping || b2.isDynamic && !b2.sleeping) {
+            if (contact.body1.isDynamic && !contact.body1.sleeping || contact.body2.isDynamic && !contact.body2.sleeping) {
                 contact.updateManifold();
             }
             numContactPoints += contact.manifold.numPoints;
@@ -450,7 +461,7 @@ class World {
             contact = contact.next;
         }
         
-        var time3:Int = Math.round(haxe.Timer.stamp() * 1000);
+        var time3 = haxe.Timer.stamp() * 1000;
         performance.narrowPhaseTime = time3 - time2;
     }
     
@@ -538,12 +549,11 @@ class World {
         return true;
     }
     
-    private function solveIslands() {
+    inline private function solveIslands() {
         var invTimeStep:Float = 1 / timeStep;
         var body:RigidBody;
         var joint:Joint;
         var constraint:Constraint;
-        //var num : Int;
         
         joint = joints;
         while (joint != null) {
@@ -731,10 +741,10 @@ class World {
             }
             numIslands++;
             if (base != null) {
-				/*TODO*/ 
 				base = base.next;
 			}
         }
+		
         var time2:Int = Math.round(haxe.Timer.stamp() * 1000);
         performance.solvingTime = time2 - time1;
     }
