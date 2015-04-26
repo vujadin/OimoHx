@@ -155,24 +155,24 @@ class BoxShape extends Shape {
 	}
 	
 	inline function _updateProxy() {
-		normalDirectionWidth.x = rotation.e00;
-		normalDirectionWidth.y = rotation.e10;
-		normalDirectionWidth.z = rotation.e20;
-		normalDirectionHeight.x = rotation.e01;
-		normalDirectionHeight.y = rotation.e11;
-		normalDirectionHeight.z = rotation.e21;
-		normalDirectionDepth.x = rotation.e02;
-		normalDirectionDepth.y = rotation.e12;
-		normalDirectionDepth.z = rotation.e22;
-		halfDirectionWidth.x = rotation.e00 * halfWidth;
-		halfDirectionWidth.y = rotation.e10 * halfWidth;
-		halfDirectionWidth.z = rotation.e20 * halfWidth;
-		halfDirectionHeight.x = rotation.e01 * halfHeight;
-		halfDirectionHeight.y = rotation.e11 * halfHeight;
-		halfDirectionHeight.z = rotation.e21 * halfHeight;
-		halfDirectionDepth.x = rotation.e02 * halfDepth;
-		halfDirectionDepth.y = rotation.e12 * halfDepth;
-		halfDirectionDepth.z = rotation.e22 * halfDepth;
+		normalDirectionWidth.x = rotation.elements[0];
+		normalDirectionWidth.y = rotation.elements[3];
+		normalDirectionWidth.z = rotation.elements[6];
+		normalDirectionHeight.x = rotation.elements[1];
+		normalDirectionHeight.y = rotation.elements[4];
+		normalDirectionHeight.z = rotation.elements[7];
+		normalDirectionDepth.x = rotation.elements[2];
+		normalDirectionDepth.y = rotation.elements[5];
+		normalDirectionDepth.z = rotation.elements[8];
+		halfDirectionWidth.x = rotation.elements[0] * halfWidth;
+		halfDirectionWidth.y = rotation.elements[3] * halfWidth;
+		halfDirectionWidth.z = rotation.elements[6] * halfWidth;
+		halfDirectionHeight.x = rotation.elements[1] * halfHeight;
+		halfDirectionHeight.y = rotation.elements[4] * halfHeight;
+		halfDirectionHeight.z = rotation.elements[7] * halfHeight;
+		halfDirectionDepth.x = rotation.elements[2] * halfDepth;
+		halfDirectionDepth.y = rotation.elements[5] * halfDepth;
+		halfDirectionDepth.z = rotation.elements[8] * halfDepth;
 		
 		wx = halfDirectionWidth.x;
 		wy = halfDirectionWidth.y;

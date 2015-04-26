@@ -91,18 +91,18 @@ class ContactManifold {
         var ry:Float = y - body1.position.y;
         var rz:Float = z - body1.position.z;
 		
-        p.localPoint1.x = rx * r.e00 + ry * r.e10 + rz * r.e20;
-        p.localPoint1.y = rx * r.e01 + ry * r.e11 + rz * r.e21;
-        p.localPoint1.z = rx * r.e02 + ry * r.e12 + rz * r.e22;
+        p.localPoint1.x = rx * r.elements[0] + ry * r.elements[1] + rz * r.elements[2];
+        p.localPoint1.y = rx * r.elements[3] + ry * r.elements[4] + rz * r.elements[5];
+        p.localPoint1.z = rx * r.elements[6] + ry * r.elements[7] + rz * r.elements[8];
 		
         r = body2.rotation;
         rx = x - body2.position.x;
         ry = y - body2.position.y;
         rz = z - body2.position.z;
 		
-        p.localPoint2.x = rx * r.e00 + ry * r.e10 + rz * r.e20;
-        p.localPoint2.y = rx * r.e01 + ry * r.e11 + rz * r.e21;
-        p.localPoint2.z = rx * r.e02 + ry * r.e12 + rz * r.e22;
+        p.localPoint2.x = rx * r.elements[0] + ry * r.elements[1] + rz * r.elements[2];
+        p.localPoint2.y = rx * r.elements[3] + ry * r.elements[4] + rz * r.elements[5];
+        p.localPoint2.z = rx * r.elements[6] + ry * r.elements[7] + rz * r.elements[8];
         p.normalImpulse = 0;
 		
         if (flip) {

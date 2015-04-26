@@ -49,8 +49,6 @@ class Shape {
 	 */
     public static inline var SHAPE_BOX:Int = 0x2;
     
-    // TODO: Capsule shape
-    
     /**
 	 * The previous shape in parent rigid body.
 	 */

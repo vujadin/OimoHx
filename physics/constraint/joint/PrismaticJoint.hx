@@ -28,44 +28,44 @@ import oimohx.physics.constraint.joint.base.RotationalConstraint;
 import oimohx.physics.constraint.joint.base.Translational3Constraint;
 import oimohx.physics.constraint.joint.base.TranslationalConstraint;
 import oimohx.physics.dynamics.RigidBody;
+
 /**
-	 * A prismatic joint allows only for relative translation of rigid bodies along the axis.
-	 * @author saharan
+ * A prismatic joint allows only for relative translation of rigid bodies along the axis.
+ * @author saharan
+ */
+class PrismaticJoint extends Joint {
+    /**
+	 * The axis in the first body's coordinate system.
 	 */
-class PrismaticJoint extends Joint
-{
-    /**
-		 * The axis in the first body's coordinate system.
-		 */
-    public var localAxis1 : Vec3;
+    public var localAxis1:Vec3;
     
     /**
-		 * The axis in the second body's coordinate system.
-		 */
-    public var localAxis2 : Vec3;
+	 * The axis in the second body's coordinate system.
+	 */
+    public var localAxis2:Vec3;
     
     /**
-		 * The translational limit and motor information of the joint.
-		 */
-    public var limitMotor : LimitMotor;
+	 * The translational limit and motor information of the joint.
+	 */
+    public var limitMotor:LimitMotor;
     
-    private var localAxis1X : Float;
-    private var localAxis1Y : Float;
-    private var localAxis1Z : Float;
+    private var localAxis1X:Float;
+    private var localAxis1Y:Float;
+    private var localAxis1Z:Float;
     
-    private var localAxis2X : Float;
-    private var localAxis2Y : Float;
-    private var localAxis2Z : Float;
+    private var localAxis2X:Float;
+    private var localAxis2Y:Float;
+    private var localAxis2Z:Float;
     
-    private var t3 : Translational3Constraint;
-    private var ac : AngularConstraint;
+    private var t3:Translational3Constraint;
+    private var ac:AngularConstraint;
     
-    private var nor : Vec3;
-    private var tan : Vec3;
-    private var bin : Vec3;
+    private var nor:Vec3;
+    private var tan:Vec3;
+    private var bin:Vec3;
     
-    public function new(config : JointConfig, lowerTranslation : Float, upperTranslation : Float)
-    {
+	
+    public function new(config:JointConfig, lowerTranslation:Float, upperTranslation:Float) {
         super(config);
         localAxis1 = new Vec3().normalize(config.localAxis1);
         localAxis2 = new Vec3().normalize(config.localAxis2);
@@ -91,42 +91,44 @@ class PrismaticJoint extends Joint
     }
     
     /**
-		 * @inheritDoc
-		 */
-    override public function preSolve(timeStep : Float, invTimeStep : Float) : Void{
-        var tmpM : Mat33;
-        var tmp1X : Float;
-        var tmp1Y : Float;
-        var tmp1Z : Float;
+	 * @inheritDoc
+	 */
+    override public function preSolve(timeStep:Float, invTimeStep:Float) {
+        var tmpM:Mat33;
+        var tmp1X:Float;
+        var tmp1Y:Float;
+        var tmp1Z:Float;
         
         updateAnchorPoints();
         
         tmpM = body1.rotation;
-        var axis1X : Float = localAxis1X * tmpM.e00 + localAxis1Y * tmpM.e01 + localAxis1Z * tmpM.e02;
-        var axis1Y : Float = localAxis1X * tmpM.e10 + localAxis1Y * tmpM.e11 + localAxis1Z * tmpM.e12;
-        var axis1Z : Float = localAxis1X * tmpM.e20 + localAxis1Y * tmpM.e21 + localAxis1Z * tmpM.e22;
+        var axis1X:Float = localAxis1X * tmpM.elements[0] + localAxis1Y * tmpM.elements[1] + localAxis1Z * tmpM.elements[2];
+        var axis1Y:Float = localAxis1X * tmpM.elements[3] + localAxis1Y * tmpM.elements[4] + localAxis1Z * tmpM.elements[5];
+        var axis1Z:Float = localAxis1X * tmpM.elements[6] + localAxis1Y * tmpM.elements[7] + localAxis1Z * tmpM.elements[8];
         tmpM = body2.rotation;
-        var axis2X : Float = localAxis2X * tmpM.e00 + localAxis2Y * tmpM.e01 + localAxis2Z * tmpM.e02;
-        var axis2Y : Float = localAxis2X * tmpM.e10 + localAxis2Y * tmpM.e11 + localAxis2Z * tmpM.e12;
-        var axis2Z : Float = localAxis2X * tmpM.e20 + localAxis2Y * tmpM.e21 + localAxis2Z * tmpM.e22;
-        var nx : Float = axis1X * body2.inverseMass + axis2X * body1.inverseMass;
-        var ny : Float = axis1Y * body2.inverseMass + axis2Y * body1.inverseMass;
-        var nz : Float = axis1Z * body2.inverseMass + axis2Z * body1.inverseMass;
+        var axis2X:Float = localAxis2X * tmpM.elements[0] + localAxis2Y * tmpM.elements[1] + localAxis2Z * tmpM.elements[2];
+        var axis2Y:Float = localAxis2X * tmpM.elements[3] + localAxis2Y * tmpM.elements[4] + localAxis2Z * tmpM.elements[5];
+        var axis2Z:Float = localAxis2X * tmpM.elements[6] + localAxis2Y * tmpM.elements[7] + localAxis2Z * tmpM.elements[8];
+        var nx:Float = axis1X * body2.inverseMass + axis2X * body1.inverseMass;
+        var ny:Float = axis1Y * body2.inverseMass + axis2Y * body1.inverseMass;
+        var nz:Float = axis1Z * body2.inverseMass + axis2Z * body1.inverseMass;
         tmp1X = Math.sqrt(nx * nx + ny * ny + nz * nz);
-        if (tmp1X > 0)             tmp1X = 1 / tmp1X;
+        if (tmp1X > 0) {
+            tmp1X = 1 / tmp1X;
+		}
         nx *= tmp1X;
         ny *= tmp1X;
         nz *= tmp1X;
-        var tx : Float = ny * nx - nz * nz;
-        var ty : Float = -nz * ny - nx * nx;
-        var tz : Float = nx * nz + ny * ny;
+        var tx:Float = ny * nx - nz * nz;
+        var ty:Float = -nz * ny - nx * nx;
+        var tz:Float = nx * nz + ny * ny;
         tmp1X = 1 / Math.sqrt(tx * tx + ty * ty + tz * tz);
         tx *= tmp1X;
         ty *= tmp1X;
         tz *= tmp1X;
-        var bx : Float = ny * tz - nz * ty;
-        var by : Float = nz * tx - nx * tz;
-        var bz : Float = nx * ty - ny * tx;
+        var bx:Float = ny * tz - nz * ty;
+        var by:Float = nz * tx - nx * tz;
+        var bz:Float = nx * ty - ny * tx;
         
         nor.init(nx, ny, nz);
         tan.init(tx, ty, tz);
@@ -137,18 +139,18 @@ class PrismaticJoint extends Joint
     }
     
     /**
-		 * @inheritDoc
-		 */
-    override public function solve() : Void{
+	 * @inheritDoc
+	 */
+    override public function solve() {
         ac.solve();
         t3.solve();
     }
     
     /**
-		 * @inheritDoc
-		 */
-    override public function postSolve() : Void{
+	 * @inheritDoc
+	 */
+    override public function postSolve() {
         
     }
+	
 }
-

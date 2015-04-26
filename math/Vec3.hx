@@ -176,9 +176,9 @@ class Vec3 {
 	 * @return
 	 */
     inline public function mulMat(m:Mat33, v:Vec3):Vec3 {
-        this.x = m.e00 * v.x + m.e01 * v.y + m.e02 * v.z;
-        this.y = m.e10 * v.x + m.e11 * v.y + m.e12 * v.z;
-        this.z = m.e20 * v.x + m.e21 * v.y + m.e22 * v.z;
+        this.x = m.elements[0] * v.x + m.elements[1] * v.y + m.elements[2] * v.z;
+        this.y = m.elements[3] * v.x + m.elements[4] * v.y + m.elements[5] * v.z;
+        this.z = m.elements[6] * v.x + m.elements[7] * v.y + m.elements[8] * v.z;
         return this;
     }
     

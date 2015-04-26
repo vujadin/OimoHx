@@ -26,57 +26,57 @@ import oimohx.math.Vec3;
 import oimohx.physics.constraint.joint.base.LinearConstraint;
 import oimohx.physics.constraint.joint.base.Rotational3Constraint;
 import oimohx.physics.dynamics.RigidBody;
+
 /**
-	 * A hinge joint allows only for relative rotation of rigid bodies along the axis.
-	 * @author saharan
+ * A hinge joint allows only for relative rotation of rigid bodies along the axis.
+ * @author saharan
+ */
+class HingeJoint extends Joint {
+    /**
+	 * The axis in the first body's coordinate system.
 	 */
-class HingeJoint extends Joint
-{
-    /**
-		 * The axis in the first body's coordinate system.
-		 */
-    public var localAxis1 : Vec3;
+    public var localAxis1:Vec3;
     
     /**
-		 * The axis in the second body's coordinate system.
-		 */
-    public var localAxis2 : Vec3;
+	 * The axis in the second body's coordinate system.
+	 */
+    public var localAxis2:Vec3;
     
     /**
-		 * The rotational limit and motor information of the joint.
-		 */
-    public var limitMotor : LimitMotor;
+	 * The rotational limit and motor information of the joint.
+	 */
+    public var limitMotor:LimitMotor;
     
-    private var localAxis1X : Float;
-    private var localAxis1Y : Float;
-    private var localAxis1Z : Float;
+    private var localAxis1X:Float;
+    private var localAxis1Y:Float;
+    private var localAxis1Z:Float;
     
-    private var localAxis2X : Float;
-    private var localAxis2Y : Float;
-    private var localAxis2Z : Float;
+    private var localAxis2X:Float;
+    private var localAxis2Y:Float;
+    private var localAxis2Z:Float;
     
-    private var localAngAxis1X : Float;
-    private var localAngAxis1Y : Float;
-    private var localAngAxis1Z : Float;
+    private var localAngAxis1X:Float;
+    private var localAngAxis1Y:Float;
+    private var localAngAxis1Z:Float;
     
-    private var localAngAxis2X : Float;
-    private var localAngAxis2Y : Float;
-    private var localAngAxis2Z : Float;
+    private var localAngAxis2X:Float;
+    private var localAngAxis2Y:Float;
+    private var localAngAxis2Z:Float;
     
-    private var lc : LinearConstraint;
-    private var r3 : Rotational3Constraint;
+    private var lc:LinearConstraint;
+    private var r3:Rotational3Constraint;
     
-    private var nor : Vec3;
-    private var tan : Vec3;
-    private var bin : Vec3;
+    private var nor:Vec3;
+    private var tan:Vec3;
+    private var bin:Vec3;
+	
     
-    public function new(config : JointConfig, lowerAngleLimit : Float = 1, upperAngleLimit : Float = 0)
-    {
+    public function new(config:JointConfig, lowerAngleLimit:Float = 1, upperAngleLimit:Float = 0) {
         super(config);
         localAxis1 = new Vec3().normalize(config.localAxis1);
         localAxis2 = new Vec3().normalize(config.localAxis2);
         
-        var len : Float;
+        var len:Float;
         localAxis1X = localAxis1.x;
         localAxis1Y = localAxis1.y;
         localAxis1Z = localAxis1.z;
@@ -93,10 +93,10 @@ class HingeJoint extends Joint
         localAxis2Z = localAxis2.z;
         
         // make angle axis 2
-        var arc : Mat33 = new Mat33().setQuat(new Quat().arc(localAxis1, localAxis2));
-        localAngAxis2X = localAngAxis1X * arc.e00 + localAngAxis1Y * arc.e01 + localAngAxis1Z * arc.e02;
-        localAngAxis2Y = localAngAxis1X * arc.e10 + localAngAxis1Y * arc.e11 + localAngAxis1Z * arc.e12;
-        localAngAxis2Z = localAngAxis1X * arc.e20 + localAngAxis1Y * arc.e21 + localAngAxis1Z * arc.e22;
+        var arc:Mat33 = new Mat33().setQuat(new Quat().arc(localAxis1, localAxis2));
+        localAngAxis2X = localAngAxis1X * arc.elements[0] + localAngAxis1Y * arc.elements[1] + localAngAxis1Z * arc.elements[2];
+        localAngAxis2Y = localAngAxis1X * arc.elements[3] + localAngAxis1Y * arc.elements[4] + localAngAxis1Z * arc.elements[5];
+        localAngAxis2Z = localAngAxis1X * arc.elements[6] + localAngAxis1Y * arc.elements[7] + localAngAxis1Z * arc.elements[7];
         
         type = Joint.JOINT_HINGE;
         
@@ -112,48 +112,50 @@ class HingeJoint extends Joint
     }
     
     /**
-		 * @inheritDoc
-		 */
-    override public function preSolve(timeStep : Float, invTimeStep : Float) : Void{
-        var tmpM : Mat33;
-        var tmp1X : Float;
-        var tmp1Y : Float;
-        var tmp1Z : Float;
+	 * @inheritDoc
+	 */
+    override public function preSolve(timeStep:Float, invTimeStep:Float) {
+        var tmpM:Mat33;
+        var tmp1X:Float;
+        var tmp1Y:Float;
+        var tmp1Z:Float;
         
         updateAnchorPoints();
         
         tmpM = body1.rotation;
-        var axis1X : Float = localAxis1X * tmpM.e00 + localAxis1Y * tmpM.e01 + localAxis1Z * tmpM.e02;
-        var axis1Y : Float = localAxis1X * tmpM.e10 + localAxis1Y * tmpM.e11 + localAxis1Z * tmpM.e12;
-        var axis1Z : Float = localAxis1X * tmpM.e20 + localAxis1Y * tmpM.e21 + localAxis1Z * tmpM.e22;
-        var angAxis1X : Float = localAngAxis1X * tmpM.e00 + localAngAxis1Y * tmpM.e01 + localAngAxis1Z * tmpM.e02;
-        var angAxis1Y : Float = localAngAxis1X * tmpM.e10 + localAngAxis1Y * tmpM.e11 + localAngAxis1Z * tmpM.e12;
-        var angAxis1Z : Float = localAngAxis1X * tmpM.e20 + localAngAxis1Y * tmpM.e21 + localAngAxis1Z * tmpM.e22;
+        var axis1X:Float = localAxis1X * tmpM.elements[0] + localAxis1Y * tmpM.elements[1] + localAxis1Z * tmpM.elements[2];
+        var axis1Y:Float = localAxis1X * tmpM.elements[3] + localAxis1Y * tmpM.elements[4] + localAxis1Z * tmpM.elements[5];
+        var axis1Z:Float = localAxis1X * tmpM.elements[6] + localAxis1Y * tmpM.elements[7] + localAxis1Z * tmpM.elements[8];
+        var angAxis1X:Float = localAngAxis1X * tmpM.elements[0] + localAngAxis1Y * tmpM.elements[1] + localAngAxis1Z * tmpM.elements[2];
+        var angAxis1Y:Float = localAngAxis1X * tmpM.elements[3] + localAngAxis1Y * tmpM.elements[4] + localAngAxis1Z * tmpM.elements[5];
+        var angAxis1Z:Float = localAngAxis1X * tmpM.elements[6] + localAngAxis1Y * tmpM.elements[7] + localAngAxis1Z * tmpM.elements[8];
         tmpM = body2.rotation;
-        var axis2X : Float = localAxis2X * tmpM.e00 + localAxis2Y * tmpM.e01 + localAxis2Z * tmpM.e02;
-        var axis2Y : Float = localAxis2X * tmpM.e10 + localAxis2Y * tmpM.e11 + localAxis2Z * tmpM.e12;
-        var axis2Z : Float = localAxis2X * tmpM.e20 + localAxis2Y * tmpM.e21 + localAxis2Z * tmpM.e22;
-        var angAxis2X : Float = localAngAxis2X * tmpM.e00 + localAngAxis2Y * tmpM.e01 + localAngAxis2Z * tmpM.e02;
-        var angAxis2Y : Float = localAngAxis2X * tmpM.e10 + localAngAxis2Y * tmpM.e11 + localAngAxis2Z * tmpM.e12;
-        var angAxis2Z : Float = localAngAxis2X * tmpM.e20 + localAngAxis2Y * tmpM.e21 + localAngAxis2Z * tmpM.e22;
-        var nx : Float = axis1X * body2.inverseMass + axis2X * body1.inverseMass;
-        var ny : Float = axis1Y * body2.inverseMass + axis2Y * body1.inverseMass;
-        var nz : Float = axis1Z * body2.inverseMass + axis2Z * body1.inverseMass;
+        var axis2X:Float = localAxis2X * tmpM.elements[0] + localAxis2Y * tmpM.elements[1] + localAxis2Z * tmpM.elements[2];
+        var axis2Y:Float = localAxis2X * tmpM.elements[3] + localAxis2Y * tmpM.elements[4] + localAxis2Z * tmpM.elements[5];
+        var axis2Z:Float = localAxis2X * tmpM.elements[6] + localAxis2Y * tmpM.elements[7] + localAxis2Z * tmpM.elements[8];
+        var angAxis2X:Float = localAngAxis2X * tmpM.elements[0] + localAngAxis2Y * tmpM.elements[1] + localAngAxis2Z * tmpM.elements[2];
+        var angAxis2Y:Float = localAngAxis2X * tmpM.elements[3] + localAngAxis2Y * tmpM.elements[4] + localAngAxis2Z * tmpM.elements[5];
+        var angAxis2Z:Float = localAngAxis2X * tmpM.elements[6] + localAngAxis2Y * tmpM.elements[7] + localAngAxis2Z * tmpM.elements[8];
+        var nx:Float = axis1X * body2.inverseMass + axis2X * body1.inverseMass;
+        var ny:Float = axis1Y * body2.inverseMass + axis2Y * body1.inverseMass;
+        var nz:Float = axis1Z * body2.inverseMass + axis2Z * body1.inverseMass;
         tmp1X = Math.sqrt(nx * nx + ny * ny + nz * nz);
-        if (tmp1X > 0)             tmp1X = 1 / tmp1X;
+        if (tmp1X > 0) {
+			tmp1X = 1 / tmp1X;
+		}
         nx *= tmp1X;
         ny *= tmp1X;
         nz *= tmp1X;
-        var tx : Float = ny * nx - nz * nz;
-        var ty : Float = -nz * ny - nx * nx;
-        var tz : Float = nx * nz + ny * ny;
+        var tx:Float = ny * nx - nz * nz;
+        var ty:Float = -nz * ny - nx * nx;
+        var tz:Float = nx * nz + ny * ny;
         tmp1X = 1 / Math.sqrt(tx * tx + ty * ty + tz * tz);
         tx *= tmp1X;
         ty *= tmp1X;
         tz *= tmp1X;
-        var bx : Float = ny * tz - nz * ty;
-        var by : Float = nz * tx - nx * tz;
-        var bz : Float = nx * ty - ny * tx;
+        var bx:Float = ny * tz - nz * ty;
+        var by:Float = nz * tx - nx * tz;
+        var bz:Float = nx * ty - ny * tx;
         
         nor.init(nx, ny, nz);
         tan.init(tx, ty, tz);
@@ -173,8 +175,6 @@ class HingeJoint extends Joint
             limitMotor.angle = acosClamp(angAxis1X * angAxis2X + angAxis1Y * angAxis2Y + angAxis1Z * angAxis2Z);
         }  // angular error  
         
-        
-        
         tmp1X = axis1Y * axis2Z - axis1Z * axis2Y;
         tmp1Y = axis1Z * axis2X - axis1X * axis2Z;
         tmp1Z = axis1X * axis2Y - axis1Y * axis2X;
@@ -187,24 +187,30 @@ class HingeJoint extends Joint
     }
     
     /**
-		 * @inheritDoc
-		 */
-    override public function solve() : Void{
+	 * @inheritDoc
+	 */
+    override public function solve() {
         r3.solve();
         lc.solve();
     }
     
     /**
-		 * @inheritDoc
-		 */
-    override public function postSolve() : Void{
+	 * @inheritDoc
+	 */
+    override public function postSolve() {
         
     }
     
-    private function acosClamp(cos : Float) : Float{
-        if (cos > 1)             return 0
-        else if (cos < -1)             return Math.PI
-        else return Math.acos(cos);
+    private function acosClamp(cos:Float):Float {
+        if (cos > 1) {
+            return 0;
+		}
+        else if (cos < -1) {
+            return Math.PI;
+		}
+        else {
+			return Math.acos(cos);
+		}
     }
+	
 }
-

@@ -30,63 +30,62 @@ import oimohx.physics.dynamics.RigidBody;
 	 * A wheel joint allows for relative rotation between two rigid bodies along two axes.
 	 * The wheel joint also allows for relative translation for the suspension.
 	 */
-class WheelJoint extends Joint
-{
+class WheelJoint extends Joint {
     /**
-		 * The first axis in local coordinate system.
-		 */
-    public var localAxis1 : Vec3;
-    
-    /**
-		 * The second axis in local coordinate system.
-		 */
-    public var localAxis2 : Vec3;
+	 * The first axis in local coordinate system.
+	 */
+    public var localAxis1:Vec3;
     
     /**
-		 * The first rotational limit and motor information of the joint.
-		 */
-    public var rotationalLimitMotor1 : LimitMotor;
+	 * The second axis in local coordinate system.
+	 */
+    public var localAxis2:Vec3;
     
     /**
-		 * The second rotational limit and motor information of the joint.
-		 */
-    public var rotationalLimitMotor2 : LimitMotor;
+	 * The first rotational limit and motor information of the joint.
+	 */
+    public var rotationalLimitMotor1:LimitMotor;
     
     /**
-		 * The translational limit and motor information of the joint.
-		 */
-    public var translationalLimitMotor : LimitMotor;
+	 * The second rotational limit and motor information of the joint.
+	 */
+    public var rotationalLimitMotor2:LimitMotor;
     
-    private var nor : Vec3;
-    private var tan : Vec3;
-    private var bin : Vec3;
+    /**
+	 * The translational limit and motor information of the joint.
+	 */
+    public var translationalLimitMotor:LimitMotor;
     
-    private var localAxis1X : Float;
-    private var localAxis1Y : Float;
-    private var localAxis1Z : Float;
+    private var nor:Vec3;
+    private var tan:Vec3;
+    private var bin:Vec3;
     
-    private var localAxis2X : Float;
-    private var localAxis2Y : Float;
-    private var localAxis2Z : Float;
+    private var localAxis1X:Float;
+    private var localAxis1Y:Float;
+    private var localAxis1Z:Float;
     
-    private var localAngAxis1X : Float;
-    private var localAngAxis1Y : Float;
-    private var localAngAxis1Z : Float;
+    private var localAxis2X:Float;
+    private var localAxis2Y:Float;
+    private var localAxis2Z:Float;
     
-    private var localAngAxis2X : Float;
-    private var localAngAxis2Y : Float;
-    private var localAngAxis2Z : Float;
+    private var localAngAxis1X:Float;
+    private var localAngAxis1Y:Float;
+    private var localAngAxis1Z:Float;
     
-    private var r3 : Rotational3Constraint;
-    private var t3 : Translational3Constraint;
+    private var localAngAxis2X:Float;
+    private var localAngAxis2Y:Float;
+    private var localAngAxis2Z:Float;
     
-    public function new(config : JointConfig)
-    {
+    private var r3:Rotational3Constraint;
+    private var t3:Translational3Constraint;
+	
+    
+    public function new(config:JointConfig) {
         super(config);
         localAxis1 = new Vec3().normalize(config.localAxis1);
         localAxis2 = new Vec3().normalize(config.localAxis2);
         
-        var len : Float;
+        var len:Float;
         localAxis1X = localAxis1.x;
         localAxis1Y = localAxis1.y;
         localAxis1Z = localAxis1.z;
@@ -94,7 +93,7 @@ class WheelJoint extends Joint
         localAxis2Y = localAxis2.y;
         localAxis2Z = localAxis2.z;
         
-        var dot : Float = localAxis1X * localAxis2X + localAxis1Y * localAxis2Y + localAxis1Z * localAxis2Z;
+        var dot:Float = localAxis1X * localAxis2X + localAxis1Y * localAxis2Y + localAxis1Z * localAxis2Z;
         if (dot > -1 && dot < 1) {
             localAngAxis1X = localAxis2X - dot * localAxis1X;
             localAngAxis1Y = localAxis2Y - dot * localAxis1Y;
@@ -121,10 +120,10 @@ class WheelJoint extends Joint
             localAngAxis1Z *= len;
             
             // make angle axis 2
-            var arc : Mat33 = new Mat33().setQuat(new Quat().arc(localAxis1, localAxis2));
-            localAngAxis2X = localAngAxis1X * arc.e00 + localAngAxis1Y * arc.e01 + localAngAxis1Z * arc.e02;
-            localAngAxis2Y = localAngAxis1X * arc.e10 + localAngAxis1Y * arc.e11 + localAngAxis1Z * arc.e12;
-            localAngAxis2Z = localAngAxis1X * arc.e20 + localAngAxis1Y * arc.e21 + localAngAxis1Z * arc.e22;
+            var arc:Mat33 = new Mat33().setQuat(new Quat().arc(localAxis1, localAxis2));
+            localAngAxis2X = localAngAxis1X * arc.elements[0] + localAngAxis1Y * arc.elements[1] + localAngAxis1Z * arc.elements[2];
+            localAngAxis2Y = localAngAxis1X * arc.elements[3] + localAngAxis1Y * arc.elements[4] + localAngAxis1Z * arc.elements[5];
+            localAngAxis2Z = localAngAxis1X * arc.elements[6] + localAngAxis1Y * arc.elements[7] + localAngAxis1Z * arc.elements[8];
         }
         
         type = Joint.JOINT_WHEEL;
@@ -145,30 +144,30 @@ class WheelJoint extends Joint
     }
     
     /**
-		 * @inheritDoc
-		 */
-    override public function preSolve(timeStep : Float, invTimeStep : Float) : Void{
-        var tmpM : Mat33;
-        var tmp1X : Float;
-        var tmp1Y : Float;
-        var tmp1Z : Float;
+	 * @inheritDoc
+	 */
+    override public function preSolve(timeStep:Float, invTimeStep:Float) {
+        var tmpM:Mat33;
+        var tmp1X:Float;
+        var tmp1Y:Float;
+        var tmp1Z:Float;
         
         updateAnchorPoints();
         
         tmpM = body1.rotation;
-        var x1 : Float = localAxis1X * tmpM.e00 + localAxis1Y * tmpM.e01 + localAxis1Z * tmpM.e02;
-        var y1 : Float = localAxis1X * tmpM.e10 + localAxis1Y * tmpM.e11 + localAxis1Z * tmpM.e12;
-        var z1 : Float = localAxis1X * tmpM.e20 + localAxis1Y * tmpM.e21 + localAxis1Z * tmpM.e22;
-        var angAxis1X : Float = localAngAxis1X * tmpM.e00 + localAngAxis1Y * tmpM.e01 + localAngAxis1Z * tmpM.e02;
-        var angAxis1Y : Float = localAngAxis1X * tmpM.e10 + localAngAxis1Y * tmpM.e11 + localAngAxis1Z * tmpM.e12;
-        var angAxis1Z : Float = localAngAxis1X * tmpM.e20 + localAngAxis1Y * tmpM.e21 + localAngAxis1Z * tmpM.e22;
+        var x1:Float = localAxis1X * tmpM.elements[0] + localAxis1Y * tmpM.elements[1] + localAxis1Z * tmpM.elements[2];
+        var y1:Float = localAxis1X * tmpM.elements[3] + localAxis1Y * tmpM.elements[4] + localAxis1Z * tmpM.elements[5];
+        var z1:Float = localAxis1X * tmpM.elements[6] + localAxis1Y * tmpM.elements[7] + localAxis1Z * tmpM.elements[8];
+        var angAxis1X:Float = localAngAxis1X * tmpM.elements[0] + localAngAxis1Y * tmpM.elements[1] + localAngAxis1Z * tmpM.elements[2];
+        var angAxis1Y:Float = localAngAxis1X * tmpM.elements[3] + localAngAxis1Y * tmpM.elements[4] + localAngAxis1Z * tmpM.elements[5];
+        var angAxis1Z:Float = localAngAxis1X * tmpM.elements[6] + localAngAxis1Y * tmpM.elements[7] + localAngAxis1Z * tmpM.elements[8];
         tmpM = body2.rotation;
-        var x2 : Float = localAxis2X * tmpM.e00 + localAxis2Y * tmpM.e01 + localAxis2Z * tmpM.e02;
-        var y2 : Float = localAxis2X * tmpM.e10 + localAxis2Y * tmpM.e11 + localAxis2Z * tmpM.e12;
-        var z2 : Float = localAxis2X * tmpM.e20 + localAxis2Y * tmpM.e21 + localAxis2Z * tmpM.e22;
-        var angAxis2X : Float = localAngAxis2X * tmpM.e00 + localAngAxis2Y * tmpM.e01 + localAngAxis2Z * tmpM.e02;
-        var angAxis2Y : Float = localAngAxis2X * tmpM.e10 + localAngAxis2Y * tmpM.e11 + localAngAxis2Z * tmpM.e12;
-        var angAxis2Z : Float = localAngAxis2X * tmpM.e20 + localAngAxis2Y * tmpM.e21 + localAngAxis2Z * tmpM.e22;
+        var x2:Float = localAxis2X * tmpM.elements[0] + localAxis2Y * tmpM.elements[1] + localAxis2Z * tmpM.elements[2];
+        var y2:Float = localAxis2X * tmpM.elements[3] + localAxis2Y * tmpM.elements[4] + localAxis2Z * tmpM.elements[5];
+        var z2:Float = localAxis2X * tmpM.elements[6] + localAxis2Y * tmpM.elements[7] + localAxis2Z * tmpM.elements[8];
+        var angAxis2X:Float = localAngAxis2X * tmpM.elements[0] + localAngAxis2Y * tmpM.elements[1] + localAngAxis2Z * tmpM.elements[2];
+        var angAxis2Y:Float = localAngAxis2X * tmpM.elements[3] + localAngAxis2Y * tmpM.elements[4] + localAngAxis2Z * tmpM.elements[5];
+        var angAxis2Z:Float = localAngAxis2X * tmpM.elements[6] + localAngAxis2Y * tmpM.elements[7] + localAngAxis2Z * tmpM.elements[8];
         r3.limitMotor1.angle = x1 * x2 + y1 * y2 + z1 * z2;
         
         if (
@@ -191,32 +190,38 @@ class WheelJoint extends Joint
             rotationalLimitMotor2.angle = -acosClamp(angAxis2X * x1 + angAxis2Y * y1 + angAxis2Z * z1);
         }
         
-        var nx : Float = y2 * z1 - z2 * y1;
-        var ny : Float = z2 * x1 - x2 * z1;
-        var nz : Float = x2 * y1 - y2 * x1;
+        var nx:Float = y2 * z1 - z2 * y1;
+        var ny:Float = z2 * x1 - x2 * z1;
+        var nz:Float = x2 * y1 - y2 * x1;
         
         tmp1X = Math.sqrt(nx * nx + ny * ny + nz * nz);
-        if (tmp1X > 0)             tmp1X = 1 / tmp1X;
+        if (tmp1X > 0) {
+            tmp1X = 1 / tmp1X;
+		}
         nx *= tmp1X;
         ny *= tmp1X;
         nz *= tmp1X;
         
-        var tx : Float = ny * z2 - nz * y2;
-        var ty : Float = nz * x2 - nx * z2;
-        var tz : Float = nx * y2 - ny * x2;
+        var tx:Float = ny * z2 - nz * y2;
+        var ty:Float = nz * x2 - nx * z2;
+        var tz:Float = nx * y2 - ny * x2;
         
         tmp1X = Math.sqrt(tx * tx + ty * ty + tz * tz);
-        if (tmp1X > 0)             tmp1X = 1 / tmp1X;
+        if (tmp1X > 0) {
+            tmp1X = 1 / tmp1X;
+		}
         tx *= tmp1X;
         ty *= tmp1X;
         tz *= tmp1X;
         
-        var bx : Float = y1 * nz - z1 * ny;
-        var by : Float = z1 * nx - x1 * nz;
-        var bz : Float = x1 * ny - y1 * nx;
+        var bx:Float = y1 * nz - z1 * ny;
+        var by:Float = z1 * nx - x1 * nz;
+        var bz:Float = x1 * ny - y1 * nx;
         
         tmp1X = Math.sqrt(bx * bx + by * by + bz * bz);
-        if (tmp1X > 0)             tmp1X = 1 / tmp1X;
+        if (tmp1X > 0) {
+            tmp1X = 1 / tmp1X;
+		}
         bx *= tmp1X;
         by *= tmp1X;
         bz *= tmp1X;
@@ -230,24 +235,30 @@ class WheelJoint extends Joint
     }
     
     /**
-		 * @inheritDoc
-		 */
-    override public function solve() : Void{
+	 * @inheritDoc
+	 */
+    override public function solve() {
         r3.solve();
         t3.solve();
     }
     
     /**
-		 * @inheritDoc
-		 */
-    override public function postSolve() : Void{
+	 * @inheritDoc
+	 */
+    override public function postSolve() {
         
     }
     
-    private function acosClamp(cos : Float) : Float{
-        if (cos > 1)             return 0
-        else if (cos < -1)             return Math.PI
-        else return Math.acos(cos);
+    private function acosClamp(cos:Float):Float {
+        if (cos > 1) {
+            return 0;
+		}
+        else if (cos < -1) {
+            return Math.PI;
+		}
+        else {
+			return Math.acos(cos);
+		}
     }
+	
 }
-

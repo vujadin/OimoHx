@@ -20,6 +20,7 @@ package oimohx.math;
 
 import oimohx.math.Mat44;
 import oimohx.math.Quat;
+import com.babylonhx.utils.typedarray.Float32Array;
 
 /**
  * A 3x3 matrix. This supports rotation, skewing, and scaling transformations.
@@ -27,31 +28,11 @@ import oimohx.math.Quat;
  */
 class Mat33 {
 	
-    public var e00:Float;
-    public var e01:Float;
-    public var e02:Float;
-    public var e10:Float;
-    public var e11:Float;
-    public var e12:Float;
-    public var e20:Float;
-    public var e21:Float;
-    public var e22:Float;
-	
-	private var _elements:Array<Float> = [];
-	public var elements(get, never):Array<Float>;
-	private function get_elements():Array<Float> {
-		_elements[0] = e00;
-        _elements[1] = e01;
-        _elements[2] = e02;
-        _elements[3] = e10;
-        _elements[4] = e11;
-        _elements[5] = e12;
-        _elements[6] = e20;
-        _elements[7] = e21;
-        _elements[8] = e22;
-		
-		return _elements;
-	}
+    #if html5
+	public var elements:Float32Array = new Float32Array(9);
+	#else
+	public var elements:Array<Float> = [];	
+	#end
 	    
     /**
 	 * Constructor.
@@ -70,15 +51,10 @@ class Mat33 {
             e00:Float = 1, e01:Float = 0, e02:Float = 0,
             e10:Float = 0, e11:Float = 1, e12:Float = 0,
             e20:Float = 0, e21:Float = 0, e22:Float = 1) {
-        this.e00 = e00;
-        this.e01 = e01;
-        this.e02 = e02;
-        this.e10 = e10;
-        this.e11 = e11;
-        this.e12 = e12;
-        this.e20 = e20;
-        this.e21 = e21;
-        this.e22 = e22;
+        var te = this.elements;
+        te[0] = e00; te[1] = e01; te[2] = e02;
+        te[3] = e10; te[4] = e11; te[5] = e12;
+        te[6] = e20; te[7] = e21; te[8] = e22;
     }
     
     /**
@@ -99,15 +75,10 @@ class Mat33 {
             e00:Float = 1, e01:Float = 0, e02:Float = 0,
             e10:Float = 0, e11:Float = 1, e12:Float = 0,
             e20:Float = 0, e21:Float = 0, e22:Float = 1):Mat33 {
-        this.e00 = e00;
-        this.e01 = e01;
-        this.e02 = e02;
-        this.e10 = e10;
-        this.e11 = e11;
-        this.e12 = e12;
-        this.e20 = e20;
-        this.e21 = e21;
-        this.e22 = e22;
+        var te = this.elements;
+        te[0] = e00; te[1] = e01; te[2] = e02;
+        te[3] = e10; te[4] = e11; te[5] = e12;
+        te[6] = e20; te[7] = e21; te[8] = e22;
         return this;
     }
     
@@ -118,15 +89,12 @@ class Mat33 {
 	 * @return
 	 */
     inline public function add(m1:Mat33, m2:Mat33):Mat33 {
-        e00 = m1.e00 + m2.e00;
-        e01 = m1.e01 + m2.e01;
-        e02 = m1.e02 + m2.e02;
-        e10 = m1.e10 + m2.e10;
-        e11 = m1.e11 + m2.e11;
-        e12 = m1.e12 + m2.e12;
-        e20 = m1.e20 + m2.e20;
-        e21 = m1.e21 + m2.e21;
-        e22 = m1.e22 + m2.e22;
+        var te = this.elements;
+		var tem1 = m1.elements;
+		var tem2 = m2.elements;
+        te[0] = tem1[0] + tem2[0]; te[1] = tem1[1] + tem2[1]; te[2] = tem1[2] + tem2[2];
+        te[3] = tem1[3] + tem2[3]; te[4] = tem1[4] + tem2[4]; te[5] = tem1[5] + tem2[5];
+        te[6] = tem1[6] + tem2[6]; te[7] = tem1[7] + tem2[7]; te[8] = tem1[8] + tem2[8];
         return this;
     }
     
@@ -136,15 +104,11 @@ class Mat33 {
 	 * @return
 	 */
     inline public function addEqual(m:Mat33):Mat33 {
-        e00 += m.e00;
-        e01 += m.e01;
-        e02 += m.e02;
-        e10 += m.e10;
-        e11 += m.e11;
-        e12 += m.e12;
-        e20 += m.e20;
-        e21 += m.e21;
-        e22 += m.e22;
+        var te = this.elements;
+		var tem = m.elements;
+        te[0] += tem[0]; te[1] += tem[1]; te[2] += tem[2];
+        te[3] += tem[3]; te[4] += tem[4]; te[5] += tem[5];
+        te[6] += tem[6]; te[7] += tem[7]; te[8] += tem[8];
         return this;
     }
     
@@ -155,15 +119,12 @@ class Mat33 {
 	 * @return
 	 */
     inline public function sub(m1:Mat33, m2:Mat33):Mat33 {
-        e00 = m1.e00 - m2.e00;
-        e01 = m1.e01 - m2.e01;
-        e02 = m1.e02 - m2.e02;
-        e10 = m1.e10 - m2.e10;
-        e11 = m1.e11 - m2.e11;
-        e12 = m1.e12 - m2.e12;
-        e20 = m1.e20 - m2.e20;
-        e21 = m1.e21 - m2.e21;
-        e22 = m1.e22 - m2.e22;
+        var te = this.elements;
+		var tem1 = m1.elements;
+		var tem2 = m2.elements;
+        te[0] = tem1[0] - tem2[0]; te[1] = tem1[1] - tem2[1]; te[2] = tem1[2] - tem2[2];
+        te[3] = tem1[3] - tem2[3]; te[4] = tem1[4] - tem2[4]; te[5] = tem1[5] - tem2[5];
+        te[6] = tem1[6] - tem2[6]; te[7] = tem1[7] - tem2[7]; te[8] = tem1[8] - tem2[8];
         return this;
     }
     
@@ -173,15 +134,11 @@ class Mat33 {
 	 * @return
 	 */
     inline public function subEqual(m:Mat33):Mat33 {
-        e00 -= m.e00;
-        e01 -= m.e01;
-        e02 -= m.e02;
-        e10 -= m.e10;
-        e11 -= m.e11;
-        e12 -= m.e12;
-        e20 -= m.e20;
-        e21 -= m.e21;
-        e22 -= m.e22;
+        var te = this.elements;
+		var tem = m.elements;
+        te[0] -= tem[0]; te[1] -= tem[1]; te[2] -= tem[2];
+        te[3] -= tem[3]; te[4] -= tem[4]; te[5] -= tem[5];
+        te[6] -= tem[6]; te[7] -= tem[7]; te[8] -= tem[8];
         return this;
     }
     
@@ -192,15 +149,11 @@ class Mat33 {
 	 * @return
 	 */
     inline public function scale(m:Mat33, s:Float):Mat33 {
-        e00 = m.e00 * s;
-        e01 = m.e01 * s;
-        e02 = m.e02 * s;
-        e10 = m.e10 * s;
-        e11 = m.e11 * s;
-        e12 = m.e12 * s;
-        e20 = m.e20 * s;
-        e21 = m.e21 * s;
-        e22 = m.e22 * s;
+        var te = this.elements;
+		var tm = m.elements;
+        te[0] = tm[0] * s; te[1] = tm[1] * s; te[2] = tm[2] * s;
+        te[3] = tm[3] * s; te[4] = tm[4] * s; te[5] = tm[5] * s;
+        te[6] = tm[6] * s; te[7] = tm[7] * s; te[8] = tm[8] * s;
         return this;
     }
     
@@ -211,15 +164,10 @@ class Mat33 {
 	 * @return
 	 */
     inline public function scaleEqual(s:Float):Mat33 {
-        e00 *= s;
-        e01 *= s;
-        e02 *= s;
-        e10 *= s;
-        e11 *= s;
-        e12 *= s;
-        e20 *= s;
-        e21 *= s;
-        e22 *= s;
+        var te = this.elements;
+        te[0] *= s; te[1] *= s; te[2] *= s;
+        te[3] *= s; te[4] *= s; te[5] *= s;
+        te[6] *= s; te[7] *= s; te[8] *= s;
         return this;
     }
     
@@ -230,15 +178,24 @@ class Mat33 {
 	 * @return
 	 */
     inline public function mul(m1:Mat33, m2:Mat33):Mat33 {
-        this.e00 = m1.e00 * m2.e00 + m1.e01 * m2.e10 + m1.e02 * m2.e20;
-        this.e01 = m1.e00 * m2.e01 + m1.e01 * m2.e11 + m1.e02 * m2.e21;
-        this.e02 = m1.e00 * m2.e02 + m1.e01 * m2.e12 + m1.e02 * m2.e22;
-        this.e10 = m1.e10 * m2.e00 + m1.e11 * m2.e10 + m1.e12 * m2.e20;
-        this.e11 = m1.e10 * m2.e01 + m1.e11 * m2.e11 + m1.e12 * m2.e21;
-        this.e12 = m1.e10 * m2.e02 + m1.e11 * m2.e12 + m1.e12 * m2.e22;
-        this.e20 = m1.e20 * m2.e00 + m1.e21 * m2.e10 + m1.e22 * m2.e20;
-        this.e21 = m1.e20 * m2.e01 + m1.e21 * m2.e11 + m1.e22 * m2.e21;
-        this.e22 = m1.e20 * m2.e02 + m1.e21 * m2.e12 + m1.e22 * m2.e22;
+        var te = this.elements;
+		var tm1 = m1.elements;
+		var tm2 = m2.elements;
+        var a0 = tm1[0], a3 = tm1[3], a6 = tm1[6],
+        a1 = tm1[1], a4 = tm1[4], a7 = tm1[7],
+        a2 = tm1[2], a5 = tm1[5], a8 = tm1[8],
+        b0 = tm2[0], b3 = tm2[3], b6 = tm2[6],
+        b1 = tm2[1], b4 = tm2[4], b7 = tm2[7],
+        b2 = tm2[2], b5 = tm2[5], b8 = tm2[8];
+        te[0] = a0*b0 + a1*b3 + a2*b6;
+        te[1] = a0*b1 + a1*b4 + a2*b7;
+        te[2] = a0*b2 + a1*b5 + a2*b8;
+        te[3] = a3*b0 + a4*b3 + a5*b6;
+        te[4] = a3*b1 + a4*b4 + a5*b7;
+        te[5] = a3*b2 + a4*b5 + a5*b8;
+        te[6] = a6*b0 + a7*b3 + a8*b6;
+        te[7] = a6*b1 + a7*b4 + a8*b7;
+        te[8] = a6*b2 + a7*b5 + a8*b8;
         return this;
     }
     
@@ -254,27 +211,16 @@ class Mat33 {
 	 * @return
 	 */
     inline public function mulScale(m:Mat33, sx:Float, sy:Float, sz:Float, prepend:Bool = false):Mat33 {
-        if (prepend) {
-            this.e00 = sx * m.e00;
-            this.e01 = sx * m.e01;
-            this.e02 = sx * m.e02;
-            this.e10 = sy * m.e10;
-            this.e11 = sy * m.e11;
-            this.e12 = sy * m.e12;
-            this.e20 = sz * m.e20;
-            this.e21 = sz * m.e21;
-            this.e22 = sz * m.e22;
-        }
-        else {
-            this.e00 = m.e00 * sx;
-            this.e01 = m.e01 * sy;
-            this.e02 = m.e02 * sz;
-            this.e10 = m.e10 * sx;
-            this.e11 = m.e11 * sy;
-            this.e12 = m.e12 * sz;
-            this.e20 = m.e20 * sx;
-            this.e21 = m.e21 * sy;
-            this.e22 = m.e22 * sz;
+        var te = this.elements;
+		var tm = m.elements;
+        if (prepend) {	
+            te[0] = sx * tm[0]; te[1] = sx * tm[1]; te[2] = sx * tm[2];
+            te[3] = sy * tm[3]; te[4] = sy * tm[4]; te[5] = sy * tm[5];
+            te[6] = sz * tm[6]; te[7] = sz * tm[7]; te[8] = sz * tm[8];
+        } else {	
+            te[0] = tm[0] * sx; te[1] = tm[1] * sy; te[2] = tm[2] * sz;
+            te[3] = tm[3] * sx; te[4] = tm[4] * sy; te[5] = tm[5] * sz;
+            te[6] = tm[6] * sx; te[7] = tm[7] * sy; te[8] = tm[8] * sz;
         }
         return this;
     }
@@ -305,27 +251,34 @@ class Mat33 {
         var r21:Float = az * ay * c1 + ax * s;
         var r22:Float = az * az * c1 + c;
 		
-        if (prepend) {
-            this.e00 = r00 * m.e00 + r01 * m.e10 + r02 * m.e20;
-            this.e01 = r00 * m.e01 + r01 * m.e11 + r02 * m.e21;
-            this.e02 = r00 * m.e02 + r01 * m.e12 + r02 * m.e22;
-            this.e10 = r10 * m.e00 + r11 * m.e10 + r12 * m.e20;
-            this.e11 = r10 * m.e01 + r11 * m.e11 + r12 * m.e21;
-            this.e12 = r10 * m.e02 + r11 * m.e12 + r12 * m.e22;
-            this.e20 = r20 * m.e00 + r21 * m.e10 + r22 * m.e20;
-            this.e21 = r20 * m.e01 + r21 * m.e11 + r22 * m.e21;
-            this.e22 = r20 * m.e02 + r21 * m.e12 + r22 * m.e22;
-        }
-        else {
-            this.e00 = m.e00 * r00 + m.e01 * r10 + m.e02 * r20;
-            this.e01 = m.e00 * r01 + m.e01 * r11 + m.e02 * r21;
-            this.e02 = m.e00 * r02 + m.e01 * r12 + m.e02 * r22;
-            this.e10 = m.e10 * r00 + m.e11 * r10 + m.e12 * r20;
-            this.e11 = m.e10 * r01 + m.e11 * r11 + m.e12 * r21;
-            this.e12 = m.e10 * r02 + m.e11 * r12 + m.e12 * r22;
-            this.e20 = m.e20 * r00 + m.e21 * r10 + m.e22 * r20;
-            this.e21 = m.e20 * r01 + m.e21 * r11 + m.e22 * r21;
-            this.e22 = m.e20 * r02 + m.e21 * r12 + m.e22 * r22;
+        var tm = m.elements;
+		
+        var a0 = tm[0], a3 = tm[3], a6 = tm[6];
+        var a1 = tm[1], a4 = tm[4], a7 = tm[7];
+        var a2 = tm[2], a5 = tm[5], a8 = tm[8];
+		
+        var te = this.elements;
+        
+        if (prepend) {	
+            te[0] = r00 * a0 + r01 * a3 + r02 * a6;
+            te[1] = r00 * a1 + r01 * a4 + r02 * a7;
+            te[2] = r00 * a2 + r01 * a5 + r02 * a8;
+            te[3] = r10 * a0 + r11 * a3 + r12 * a6;
+            te[4] = r10 * a1 + r11 * a4 + r12 * a7;
+            te[5] = r10 * a2 + r11 * a5 + r12 * a8;
+            te[6] = r20 * a0 + r21 * a3 + r22 * a6;
+            te[7] = r20 * a1 + r21 * a4 + r22 * a7;
+            te[8] = r20 * a2 + r21 * a5 + r22 * a8;
+        } else {	
+            te[0] = a0 * r00 + a1 * r10 + a2 * r20;
+            te[1] = a0 * r01 + a1 * r11 + a2 * r21;
+            te[2] = a0 * r02 + a1 * r12 + a2 * r22;
+            te[3] = a3 * r00 + a4 * r10 + a5 * r20;
+            te[4] = a3 * r01 + a4 * r11 + a5 * r21;
+            te[5] = a3 * r02 + a4 * r12 + a5 * r22;
+            te[6] = a6 * r00 + a7 * r10 + a8 * r20;
+            te[7] = a6 * r01 + a7 * r11 + a8 * r21;
+            te[8] = a6 * r02 + a7 * r12 + a8 * r22;
         }
         return this;
     }
@@ -336,21 +289,11 @@ class Mat33 {
 	 * @return
 	 */
     inline public function transpose(m:Mat33):Mat33 {
-        var e01:Float = m.e10;
-        var e02:Float = m.e20;
-        var e10:Float = m.e01;
-        var e12:Float = m.e21;
-        var e20:Float = m.e02;
-        var e21:Float = m.e12;
-        e00 = m.e00;
-        this.e01 = e01;
-        this.e02 = e02;
-        this.e10 = e10;
-        e11 = m.e11;
-        this.e12 = e12;
-        this.e20 = e20;
-        this.e21 = e21;
-        e22 = m.e22;
+        var te = this.elements;
+		var tm = m.elements;
+        te[0] = tm[0]; te[1] = tm[3]; te[2] = tm[6];
+        te[3] = tm[1]; te[4] = tm[4]; te[5] = tm[7];
+        te[6] = tm[2]; te[7] = tm[5]; te[8] = tm[8];
         return this;
     }
     
@@ -360,27 +303,21 @@ class Mat33 {
 	 * @return
 	 */
     public function setQuat(q:Quat):Mat33 {
-        var x2:Float = 2 * q.x;
-        var y2:Float = 2 * q.y;
-        var z2:Float = 2 * q.z;
-        var xx:Float = q.x * x2;
-        var yy:Float = q.y * y2;
-        var zz:Float = q.z * z2;
-        var xy:Float = q.x * y2;
-        var yz:Float = q.y * z2;
-        var xz:Float = q.x * z2;
-        var sx:Float = q.s * x2;
-        var sy:Float = q.s * y2;
-        var sz:Float = q.s * z2;
-        e00 = 1 - yy - zz;
-        e01 = xy - sz;
-        e02 = xz + sy;
-        e10 = xy + sz;
-        e11 = 1 - xx - zz;
-        e12 = yz - sx;
-        e20 = xz - sy;
-        e21 = yz + sx;
-        e22 = 1 - xx - yy;
+        var te = this.elements;
+        var x2 = 2 * q.x, y2 = 2 * q.y, z2 = 2 * q.z;
+        var xx = q.x * x2, yy = q.y * y2, zz = q.z * z2;
+        var xy = q.x * y2, yz = q.y * z2, xz = q.x * z2;
+        var sx = q.s * x2, sy = q.s * y2, sz = q.s * z2;
+        
+        te[0] = 1 - yy - zz;
+        te[1] = xy - sz;
+        te[2] = xz + sy;
+        te[3] = xy + sz;
+        te[4] = 1 - xx - zz;
+        te[5] = yz - sx;
+        te[6] = xz - sy;
+        te[7] = yz + sx;
+        te[8] = 1 - xx - yy;
         return this;
     }
     
@@ -390,23 +327,29 @@ class Mat33 {
 	 * @return
 	 */
     inline public function invert(m:Mat33):Mat33 {
-        var det:Float = 
-        m.e00 * (m.e11 * m.e22 - m.e21 * m.e12) +
-        m.e10 * (m.e21 * m.e02 - m.e01 * m.e22) +
-        m.e20 * (m.e01 * m.e12 - m.e11 * m.e02);
-        if (det != 0) {
-            det = 1 / det;
+        var te = this.elements;
+		var tm = m.elements;
+        var a0 = tm[0], a3 = tm[3], a6 = tm[6];
+        var a1 = tm[1], a4 = tm[4], a7 = tm[7];
+        var a2 = tm[2], a5 = tm[5], a8 = tm[8];
+        var b01 = a4 * a8 - a7 * a5;
+        var b11 = a7 * a2 - a1 * a8;
+        var b21 = a1 * a5 - a4 * a2;
+        var dt = a0 * (b01) + a3 * (b11) + a6 * (b21);
+		
+        if (dt != 0) {
+			dt = 1.0 / dt;
 		}
-        
-        e00 = det * (m.e11 * m.e22 - m.e12 * m.e21);
-        e01 = det * (m.e02 * m.e21 - m.e01 * m.e22);
-        e02 = det * (m.e01 * m.e12 - m.e02 * m.e11);
-        e10 = det * (m.e12 * m.e20 - m.e10 * m.e22);
-        e11 = det * (m.e00 * m.e22 - m.e02 * m.e20);
-        e12 = det * (m.e02 * m.e10 - m.e00 * m.e12);
-        e20 = det * (m.e10 * m.e21 - m.e11 * m.e20);
-        e21 = det * (m.e01 * m.e20 - m.e00 * m.e21);
-        e22 = det * (m.e00 * m.e11 - m.e01 * m.e10);
+		
+        te[0] = dt * b01;
+        te[1] = dt * b11;
+        te[2] = dt * b21;
+        te[3] = dt * (a5 * a6 - a3 * a8);
+        te[4] = dt * (a0 * a8 - a2 * a6);
+        te[5] = dt * (a2 * a3 - a0 * a5);
+        te[6] = dt * (a3 * a7 - a4 * a6);
+        te[7] = dt * (a1 * a6 - a0 * a7);
+        te[8] = dt * (a0 * a4 - a1 * a3);
         return this;
     }
     
@@ -416,54 +359,26 @@ class Mat33 {
 	 * @return
 	 */
     inline public function copy(m:Mat33):Mat33 {
-        e00 = m.e00;
-        e01 = m.e01;
-        e02 = m.e02;
-        e10 = m.e10;
-        e11 = m.e11;
-        e12 = m.e12;
-        e20 = m.e20;
-        e21 = m.e21;
-        e22 = m.e22;
+        var te = this.elements;
+		var tem = m.elements;
+        te[0] = tem[0]; te[1] = tem[1]; te[2] = tem[2];
+        te[3] = tem[3]; te[4] = tem[4]; te[5] = tem[5];
+        te[6] = tem[6]; te[7] = tem[7]; te[8] = tem[8];
         return this;
     }
-    
-    /**
-	 * this = m
-	 * @param	m
-	 * @return
-	 */
-    inline public function copyMat44(m:Mat44):Mat33 {
-        e00 = m.e00;
-        e01 = m.e01;
-        e02 = m.e02;
-        e10 = m.e10;
-        e11 = m.e11;
-        e12 = m.e12;
-        e20 = m.e20;
-        e21 = m.e21;
-        e22 = m.e22;
-        return this;
-    }
-    
+        
     /**
 	 * Get the clone of the matrix.
 	 * @return
 	 */
-    public function clone():Mat33{
-        return new Mat33(e00, e01, e02, e10, e11, e12, e20, e21, e22);
+    public function clone():Mat33 {
+        var te = this.elements;
+		
+        return new Mat33(
+            te[0], te[1], te[2],
+            te[3], te[4], te[5],
+            te[6], te[7], te[8]
+        );
     }
-    
-    /**
-	 * Get the string of the matrix.
-	 * @return
-	 */
-    public function toString():String {
-        var text : String = 
-        "Mat33|" + e00 + ", " + e01 + ", " + e02 + "|\n" +
-        "     |" + e10 + ", " + e11 + ", " + e12 + "|\n" +
-        "     |" + e20 + ", " + e21 + ", " + e22 + "|";
-        return text;
-    }
+	
 }
-

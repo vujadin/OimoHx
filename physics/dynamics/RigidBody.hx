@@ -28,6 +28,7 @@ import oimohx.physics.collision.shape.MassInfo;
 import oimohx.physics.collision.shape.Shape;
 import oimohx.physics.constraint.contact.ContactLink;
 import oimohx.physics.constraint.joint.JointLink;
+import com.babylonhx.utils.typedarray.Float32Array;
 
 /**
  * 剛体のクラスです。
@@ -363,18 +364,18 @@ class RigidBody {
             localInertia.addEqual(tmpM);
             
             // add offset inertia
-            localInertia.e00 += shapeMass * (relY * relY + relZ * relZ);
-            localInertia.e11 += shapeMass * (relX * relX + relZ * relZ);
-            localInertia.e22 += shapeMass * (relX * relX + relY * relY);
+            localInertia.elements[0] += shapeMass * (relY * relY + relZ * relZ);
+            localInertia.elements[1] += shapeMass * (relX * relX + relZ * relZ);
+            localInertia.elements[2] += shapeMass * (relX * relX + relY * relY);
             var xy:Float = shapeMass * relX * relY;
             var yz:Float = shapeMass * relY * relZ;
             var zx:Float = shapeMass * relZ * relX;
-            localInertia.e01 -= xy;
-            localInertia.e10 -= xy;
-            localInertia.e02 -= yz;
-            localInertia.e20 -= yz;
-            localInertia.e12 -= zx;
-            localInertia.e21 -= zx;
+            localInertia.elements[3] -= xy;
+            localInertia.elements[4] -= xy;
+            localInertia.elements[5] -= yz;
+            localInertia.elements[6] -= yz;
+            localInertia.elements[7] -= zx;
+            localInertia.elements[8] -= zx;
             shape = shape.next;
         }
         inverseMass = 1 / mass;
@@ -391,18 +392,18 @@ class RigidBody {
             var relX = tmpV.x;
             var relY = tmpV.y;
             var relZ = tmpV.z;
-            localInertia.e00 -= mass * (relY * relY + relZ * relZ);
-            localInertia.e11 -= mass * (relX * relX + relZ * relZ);
-            localInertia.e22 -= mass * (relX * relX + relY * relY);
+            localInertia.elements[0] -= mass * (relY * relY + relZ * relZ);
+            localInertia.elements[1] -= mass * (relX * relX + relZ * relZ);
+            localInertia.elements[2] -= mass * (relX * relX + relY * relY);
             var xy = mass * relX * relY;
             var yz = mass * relY * relZ;
             var zx = mass * relZ * relX;
-            localInertia.e01 += xy;
-            localInertia.e10 += xy;
-            localInertia.e02 += yz;
-            localInertia.e20 += yz;
-            localInertia.e12 += zx;
-            localInertia.e21 += zx;
+            localInertia.elements[3] += xy;
+            localInertia.elements[4] += xy;
+            localInertia.elements[5] += yz;
+            localInertia.elements[6] += yz;
+            localInertia.elements[7] += zx;
+            localInertia.elements[8] += zx;
         }
         
         inverseLocalInertia.invert(localInertia);
@@ -552,7 +553,7 @@ class RigidBody {
     }
     
     inline private function rotateInertia(rot:Mat33, inertia:Mat33, out:Mat33) {
-		var e00:Float = rot.e00 * inertia.e00 + rot.e01 * inertia.e10 + rot.e02 * inertia.e20;
+		/*var e00:Float = rot.e00 * inertia.e00 + rot.e01 * inertia.e10 + rot.e02 * inertia.e20;
         var e01:Float = rot.e00 * inertia.e01 + rot.e01 * inertia.e11 + rot.e02 * inertia.e21;
         var e02:Float = rot.e00 * inertia.e02 + rot.e01 * inertia.e12 + rot.e02 * inertia.e22;
         var e10:Float = rot.e10 * inertia.e00 + rot.e11 * inertia.e10 + rot.e12 * inertia.e20;
@@ -569,26 +570,26 @@ class RigidBody {
         out.e12 = e10 * rot.e20 + e11 * rot.e21 + e12 * rot.e22;
         out.e20 = e20 * rot.e00 + e21 * rot.e01 + e22 * rot.e02;
         out.e21 = e20 * rot.e10 + e21 * rot.e11 + e22 * rot.e12;
-        out.e22 = e20 * rot.e20 + e21 * rot.e21 + e22 * rot.e22;
+        out.e22 = e20 * rot.e20 + e21 * rot.e21 + e22 * rot.e22;*/
 		
-        /*var r00:Float = rot.e00;
-        var r01:Float = rot.e01;
-        var r02:Float = rot.e02;
-        var r10:Float = rot.e10;
-        var r11:Float = rot.e11;
-        var r12:Float = rot.e12;
-        var r20:Float = rot.e20;
-        var r21:Float = rot.e21;
-        var r22:Float = rot.e22;
-        var i00:Float = inertia.e00;
-        var i01:Float = inertia.e01;
-        var i02:Float = inertia.e02;
-        var i10:Float = inertia.e10;
-        var i11:Float = inertia.e11;
-        var i12:Float = inertia.e12;
-        var i20:Float = inertia.e20;
-        var i21:Float = inertia.e21;
-        var i22:Float = inertia.e22;
+        var r00:Float = rot.elements[0];
+        var r01:Float = rot.elements[1];
+        var r02:Float = rot.elements[2];
+        var r10:Float = rot.elements[3];
+        var r11:Float = rot.elements[4];
+        var r12:Float = rot.elements[5];
+        var r20:Float = rot.elements[6];
+        var r21:Float = rot.elements[7];
+        var r22:Float = rot.elements[8];
+        var i00:Float = inertia.elements[0];
+        var i01:Float = inertia.elements[1];
+        var i02:Float = inertia.elements[2];
+        var i10:Float = inertia.elements[3];
+        var i11:Float = inertia.elements[4];
+        var i12:Float = inertia.elements[5];
+        var i20:Float = inertia.elements[6];
+        var i21:Float = inertia.elements[7];
+        var i22:Float = inertia.elements[8];
         var e00:Float = r00 * i00 + r01 * i10 + r02 * i20;
         var e01:Float = r00 * i01 + r01 * i11 + r02 * i21;
         var e02:Float = r00 * i02 + r01 * i12 + r02 * i22;
@@ -598,15 +599,15 @@ class RigidBody {
         var e20:Float = r20 * i00 + r21 * i10 + r22 * i20;
         var e21:Float = r20 * i01 + r21 * i11 + r22 * i21;
         var e22:Float = r20 * i02 + r21 * i12 + r22 * i22;
-        out.e00 = e00 * r00 + e01 * r01 + e02 * r02;
-        out.e01 = e00 * r10 + e01 * r11 + e02 * r12;
-        out.e02 = e00 * r20 + e01 * r21 + e02 * r22;
-        out.e10 = e10 * r00 + e11 * r01 + e12 * r02;
-        out.e11 = e10 * r10 + e11 * r11 + e12 * r12;
-        out.e12 = e10 * r20 + e11 * r21 + e12 * r22;
-        out.e20 = e20 * r00 + e21 * r01 + e22 * r02;
-        out.e21 = e20 * r10 + e21 * r11 + e22 * r12;
-        out.e22 = e20 * r20 + e21 * r21 + e22 * r22;*/
+        out.elements[0] = e00 * r00 + e01 * r01 + e02 * r02;
+        out.elements[1] = e00 * r10 + e01 * r11 + e02 * r12;
+        out.elements[2] = e00 * r20 + e01 * r21 + e02 * r22;
+        out.elements[3] = e10 * r00 + e11 * r01 + e12 * r02;
+        out.elements[4] = e10 * r10 + e11 * r11 + e12 * r12;
+        out.elements[5] = e10 * r20 + e11 * r21 + e12 * r22;
+        out.elements[6] = e20 * r00 + e21 * r01 + e22 * r02;
+        out.elements[7] = e20 * r10 + e21 * r11 + e22 * r12;
+        out.elements[8] = e20 * r20 + e21 * r21 + e22 * r22;
 		
 		/*var tm1 = rot.elements;
         var tm2 = inertia.elements;
@@ -711,15 +712,15 @@ class RigidBody {
         var sz = s * z2;
 		
         var tr = this.rotation.elements;
-        this.rotation.e00 = tr[0] = 1 - yy - zz;
-        this.rotation.e01 = tr[1] = xy - sz;
-        this.rotation.e02 = tr[2] = xz + sy;
-        this.rotation.e10 = tr[3] = xy + sz;
-        this.rotation.e11 = tr[4] = 1 - xx - zz;
-        this.rotation.e12 = tr[5] = yz - sx;
-        this.rotation.e20 = tr[6] = xz - sy;
-        this.rotation.e21 = tr[7] = yz + sx;
-        this.rotation.e22 = tr[8] = 1 - xx - yy;
+        this.rotation.elements[0] = tr[0] = 1 - yy - zz;
+        this.rotation.elements[1] = tr[1] = xy - sz;
+        this.rotation.elements[2] = tr[2] = xz + sy;
+        this.rotation.elements[3] = tr[3] = xy + sz;
+        this.rotation.elements[4] = tr[4] = 1 - xx - zz;
+        this.rotation.elements[5] = tr[5] = yz - sx;
+        this.rotation.elements[6] = tr[6] = xz - sy;
+        this.rotation.elements[7] = tr[7] = yz + sx;
+        this.rotation.elements[8] = tr[8] = 1 - xx - yy;
 		
         this.rotateInertia(this.rotation,this.inverseLocalInertia,this.inverseInertia);
         var shape:Shape = shapes;
@@ -832,9 +833,13 @@ class RigidBody {
     inline public function getQuaternion():Quat {
         return new Quat().setFromRotationMatrix(this.rotation);
     }*/
-    inline public function getMatrix():Array<Float> {
+    inline public function getMatrix(): #if !js Array<Float> #else Float32Array #end {
         var m = this.matrix.elements;
+		#if js
+		var r:Float32Array = new Float32Array(9);
+		#else
         var r:Array<Float> = [];
+		#end
 		var p:Vec3 = null;
         if(!this.sleeping){
             // rotation matrix
