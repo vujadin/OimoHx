@@ -833,9 +833,9 @@ class RigidBody {
     inline public function getQuaternion():Quat {
         return new Quat().setFromRotationMatrix(this.rotation);
     }*/
-    inline public function getMatrix(): #if !js Array<Float> #else Float32Array #end {
+    inline public function getMatrix(): #if !html5 Array<Float> #else Float32Array #end {
         var m = this.matrix.elements;
-		#if js
+		#if html5
 		var r:Float32Array = new Float32Array(9);
 		#else
         var r:Array<Float> = [];
