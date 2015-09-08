@@ -18,6 +18,7 @@
  */
 package oimohx.math;
 
+import haxe.ds.Vector;
 import oimohx.math.Mat44;
 import oimohx.math.Quat;
 import com.babylonhx.utils.typedarray.Float32Array;
@@ -28,10 +29,10 @@ import com.babylonhx.utils.typedarray.Float32Array;
  */
 class Mat33 {
 	
-    #if html5
+    #if js
 	public var elements:Float32Array = new Float32Array(9);
 	#else
-	public var elements:Array<Float> = [];	
+	public var elements:Vector<Float> = new Vector<Float>(9);	
 	#end
 	    
     /**

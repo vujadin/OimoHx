@@ -18,6 +18,7 @@
  */
 package oimohx.physics.dynamics;
 
+import haxe.ds.Vector;
 import oimohx.math.Mat44;
 import oimohx.physics.dynamics.World;
 
@@ -833,12 +834,12 @@ class RigidBody {
     inline public function getQuaternion():Quat {
         return new Quat().setFromRotationMatrix(this.rotation);
     }*/
-    inline public function getMatrix(): #if !js Array<Float> #else Float32Array #end {
+    inline public function getMatrix(): #if (js || purejs || html5 || web) Float32Array #else Vector<Float> #end {
         var m = this.matrix.elements;
 		#if js
 		var r:Float32Array = new Float32Array(9);
 		#else
-        var r:Array<Float> = [];
+        var r:Vector<Float>;
 		#end
 		var p:Vec3 = null;
         if(!this.sleeping){
