@@ -713,15 +713,24 @@ class RigidBody {
         var sz = s * z2;
 		
         var tr = this.rotation.elements;
-        this.rotation.elements[0] = tr[0] = 1 - yy - zz;
-        this.rotation.elements[1] = tr[1] = xy - sz;
-        this.rotation.elements[2] = tr[2] = xz + sy;
-        this.rotation.elements[3] = tr[3] = xy + sz;
-        this.rotation.elements[4] = tr[4] = 1 - xx - zz;
-        this.rotation.elements[5] = tr[5] = yz - sx;
-        this.rotation.elements[6] = tr[6] = xz - sy;
-        this.rotation.elements[7] = tr[7] = yz + sx;
-        this.rotation.elements[8] = tr[8] = 1 - xx - yy;
+		tr[0] = 1 - yy - zz;
+		tr[1] = xy - sz;
+		tr[2] = xz + sy;
+		tr[3] = xy + sz;
+		tr[4] = 1 - xx - zz;
+		tr[5] = yz - sx;
+		tr[6] = xz - sy;
+		tr[7] = yz + sx;
+		tr[8] = 1 - xx - yy;
+		this.rotation.elements[0] = tr[0];
+		this.rotation.elements[1] = tr[1];
+		this.rotation.elements[2] = tr[2];
+		this.rotation.elements[3] = tr[3];
+		this.rotation.elements[4] = tr[4];
+		this.rotation.elements[5] = tr[5];
+		this.rotation.elements[6] = tr[6];
+		this.rotation.elements[7] = tr[7];
+		this.rotation.elements[8] = tr[8];
 		
         this.rotateInertia(this.rotation,this.inverseLocalInertia,this.inverseInertia);
         var shape:Shape = shapes;
