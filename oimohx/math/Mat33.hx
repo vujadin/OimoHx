@@ -18,10 +18,10 @@
  */
 package oimohx.math;
 
+import oimohx.ds.Float32Array;
 import haxe.ds.Vector;
 import oimohx.math.Mat44;
 import oimohx.math.Quat;
-import com.babylonhx.utils.typedarray.Float32Array;
 
 /**
  * A 3x3 matrix. This supports rotation, skewing, and scaling transformations.
@@ -29,12 +29,8 @@ import com.babylonhx.utils.typedarray.Float32Array;
  */
 class Mat33 {
 	
-    #if js
 	public var elements:Float32Array = new Float32Array(9);
-	#else
-	public var elements:Vector<Float> = new Vector<Float>(9);	
-	#end
-	    
+
     /**
 	 * Constructor.
 	 * If the parameters are empty, the matrix will be set to the itentity matrix.

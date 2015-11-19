@@ -18,6 +18,7 @@
  */
 package oimohx.physics.dynamics;
 
+import oimohx.ds.Float32Array;
 import haxe.ds.Vector;
 import oimohx.math.Mat44;
 import oimohx.physics.dynamics.World;
@@ -29,7 +30,6 @@ import oimohx.physics.collision.shape.MassInfo;
 import oimohx.physics.collision.shape.Shape;
 import oimohx.physics.constraint.contact.ContactLink;
 import oimohx.physics.constraint.joint.JointLink;
-import com.babylonhx.utils.typedarray.Float32Array;
 
 /**
  * 剛体のクラスです。
@@ -843,13 +843,10 @@ class RigidBody {
     inline public function getQuaternion():Quat {
         return new Quat().setFromRotationMatrix(this.rotation);
     }*/
-    inline public function getMatrix(): #if (js || purejs || html5 || web) Float32Array #else Vector<Float> #end {
+    inline public function getMatrix():Float32Array
+    {
         var m = this.matrix.elements;
-		#if js
 		var r:Float32Array = new Float32Array(9);
-		#else
-        var r:Vector<Float>;
-		#end
 		var p:Vec3 = null;
         if(!this.sleeping){
             // rotation matrix
