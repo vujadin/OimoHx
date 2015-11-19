@@ -18,9 +18,9 @@
  */
 package oimohx.math;
 
+import oimohx.ds.Float32Array;
 import haxe.ds.Vector;
 import oimohx.math.Quat;
-import com.babylonhx.utils.typedarray.Float32Array;
 
 /**
  * A 4x4 matrix. This supports three-dimentional transformations perfectly.
@@ -28,12 +28,8 @@ import com.babylonhx.utils.typedarray.Float32Array;
  */
 class Mat44 {
 	
-    #if js
 	public var elements:Float32Array = new Float32Array(16);
-	#else
-	public var elements:Vector<Float> = new Vector<Float>(16);	
-	#end
-	    
+
     /**
 	 * Constructor.
 	 * If the parameters are empty, the matrix will be set to the identity matrix.
